@@ -14,6 +14,7 @@ class Settings(BaseSettings):
     # Laravel API
     LARAVEL_API_BASE_URL: str = os.getenv("LARAVEL_API_BASE_URL", "http://localhost:8000/api")
     LARAVEL_API_TIMEOUT: int = int(os.getenv("LARAVEL_API_TIMEOUT", "30"))
+    LARAVEL_API_TOKEN: str = os.getenv("LARAVEL_API_TOKEN", "token")
 
     # ChromaDB
     CHROMA_PERSIST_DIR: str = os.getenv("CHROMA_PERSIST_DIR", "./vector_store_db_llm_rag")
