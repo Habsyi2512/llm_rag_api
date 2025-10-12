@@ -13,3 +13,6 @@ __pycache__/
 # (opsional) Abaikan file dari editor
 .vscode/
 .idea/
+
+# Abaikan file database Chroma
+vector_store_db_llm_rag/

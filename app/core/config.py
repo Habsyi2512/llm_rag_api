@@ -10,7 +10,9 @@ GOOGLE_API_KEY = os.getenv("GOOGLE_API_KEY")
 GOOGLE_PROVIDER = os.getenv("GOOGLE_PROVIDER", "google_genai")  
 GOOGLE_SPREADSHEET_ID = os.getenv("GOOGLE_SPREADSHEET_ID")
 
-# LLM Configuration (pakai Ollama model lokal)
+# LARAVEL CONFIG
+LARAVEL_API_TOKEN=os.getenv("LARAVEL_API_TOKEN")
+LARAVEL_BASE_URL=os.getenv("LARAVEL_BASE_URL")
 
 # PDF Configuration
 PDF_PATH = "app/data/data-publik-disdukcapil.pdf"

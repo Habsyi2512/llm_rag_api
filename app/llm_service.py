@@ -10,7 +10,7 @@ from typing_extensions import List, TypedDict
 from langgraph.graph import START, StateGraph
 
 # Impor dari modul lokal
-from .config import GOOGLE_API_KEY, PDF_PATH, GOOGLE_SPREADSHEET_ID
+from .core.config import GOOGLE_API_KEY, PDF_PATH, GOOGLE_SPREADSHEET_ID
 from .utils.prompt_template import prompt_template
 from .utils.load_csv_from_url import load_csv_from_url
 from .utils.get_time import get_time
@@ -30,8 +30,8 @@ embeddings = GoogleGenerativeAIEmbeddings(
 )
 print("Embeddings model initialized.")
 
-CHROMA_PERSIST_DIR = "./chroma_langchain_db"
-CHROMA_COLLECTION_NAME = "chatbot_lokal"
+CHROMA_PERSIST_DIR = "./vector_store_db_llm_rag"
+CHROMA_COLLECTION_NAME = "chatbot_llm_rag_collection"
 
 print("Initializing vector store...")
 try:
