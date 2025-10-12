@@ -1,0 +1,7 @@
+curl -X POST "https://api.telegram.org/bot7515786927:AAGDxZulMEA9SzaPoaj2dKQPRECJazFqjy4/setWebhook" \
+     -H "Content-Type: application/json" \
+     -d '{
+           "url": "https://3b67-2404-8000-1005-1e73-b9ed-b623-561c-c0d8.ngrok-free.app/webhook",
+           "secret_token": "rahasia123"
+         }'
+

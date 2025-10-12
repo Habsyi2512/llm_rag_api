@@ -1,0 +1,15 @@
+# Abaikan virtual environment
+venv/
+
+# Abaikan file environment variables
+.env
+
+# (opsional) Abaikan file cache atau temporary Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# (opsional) Abaikan file dari editor
+.vscode/
+.idea/
