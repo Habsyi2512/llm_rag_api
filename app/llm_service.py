@@ -31,7 +31,7 @@ embeddings = GoogleGenerativeAIEmbeddings(
 print("Embeddings model initialized.")
 
 CHROMA_PERSIST_DIR = "./vector_store_db_llm_rag"
-CHROMA_COLLECTION_NAME = "chatbot_llm_rag_collection"
+CHROMA_COLLECTION_NAME = "faq_document_vector"
 
 print("Initializing vector store...")
 try:

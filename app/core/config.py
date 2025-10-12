@@ -1,26 +1,33 @@
 import os
 from dotenv import load_dotenv
+from pydantic_settings import BaseSettings
+from pydantic import ConfigDict # Impor ConfigDict
 
 load_dotenv()
 
-# variables untuk konfigurasi bot
-BOT_TOKEN = os.getenv("BOT_TOKEN")
-TELEGRAM_SECRET_TOKEN = os.getenv("TELEGRAM_SECRET_TOKEN")
-GOOGLE_API_KEY = os.getenv("GOOGLE_API_KEY")
-GOOGLE_PROVIDER = os.getenv("GOOGLE_PROVIDER", "google_genai")  
-GOOGLE_SPREADSHEET_ID = os.getenv("GOOGLE_SPREADSHEET_ID")
+class Settings(BaseSettings):
+    # Google
+    GOOGLE_API_KEY: str = os.getenv("GOOGLE_API_KEY", "")
+    LLM_MODEL_NAME: str = os.getenv("LLM_MODEL_NAME", "gemini-2.0-flash")
+    EMBEDDING_MODEL_NAME: str = os.getenv("EMBEDDING_MODEL_NAME", "models/embedding-001")
 
-# LARAVEL CONFIG
-LARAVEL_API_TOKEN=os.getenv("LARAVEL_API_TOKEN")
-LARAVEL_BASE_URL=os.getenv("LARAVEL_BASE_URL")
+    # Laravel API
+    LARAVEL_API_BASE_URL: str = os.getenv("LARAVEL_API_BASE_URL", "http://localhost:8000/api")
+    LARAVEL_API_TIMEOUT: int = int(os.getenv("LARAVEL_API_TIMEOUT", "30"))
 
-# PDF Configuration
-PDF_PATH = "app/data/data-publik-disdukcapil.pdf"
-CHROMA_PERSIST_DIR = "./chroma_langchain_db"
-CHROMA_COLLECTION_NAME = "chatbot_lokal"
+    # ChromaDB
+    CHROMA_PERSIST_DIR: str = os.getenv("CHROMA_PERSIST_DIR", "./vector_store_db_llm_rag")
+    CHROMA_COLLECTION_NAME: str = os.getenv("CHROMA_COLLECTION_NAME", "faq_document_vector")
 
-# Validation
-if not BOT_TOKEN:
-    raise ValueError("BOT_TOKEN environment variable is not set.")
-if not TELEGRAM_SECRET_TOKEN:
-    raise ValueError("TELEGRAM_SECRET_TOKEN environment variable is not set.")
+    # Redis
+    REDIS_URL: str = os.getenv("REDIS_URL", "redis://localhost:6379/0")
+
+
+    # Menambahkan model_config untuk konfigurasi Pydantic V2
+    model_config = ConfigDict(
+        env_file=".env",        # Lokasi file .env
+        extra="ignore"
+    )
+
+# Inisialisasi instance settings
+settings = Settings()
