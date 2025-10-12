@@ -11,7 +11,7 @@ from langgraph.graph import START, StateGraph
 
 # Impor dari modul lokal
 from .core.config import GOOGLE_API_KEY, PDF_PATH, GOOGLE_SPREADSHEET_ID
-from .utils.prompt_template import prompt_template
+from .utils.prompt_templates import prompt_template
 from .utils.load_csv_from_url import load_csv_from_url
 from .utils.get_time import get_time
 
