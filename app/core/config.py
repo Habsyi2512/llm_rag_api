@@ -8,10 +8,13 @@ load_dotenv()
 class Settings(BaseSettings):
     # Google
     GOOGLE_API_KEY: str = os.getenv("GOOGLE_API_KEY", "")
-    LLM_MODEL_NAME: str = os.getenv("LLM_MODEL_NAME", "gemini-2.5-flash")
-    EMBEDDING_MODEL_NAME: str = os.getenv("EMBEDDING_MODEL_NAME", "mxbai-embed-large:latest")
+    GOOGLE_LLM_MODEL_NAME: str = os.getenv("GOOGLE_LLM_MODEL_NAME", "gemini-2.5-flash")
+    GOOGLE_EMBEDDING_MODEL_NAME: str = os.getenv("GOOGLE_EMBEDDING_MODEL_NAME", "")
 
+    # Ollama
     OLLAMA_BASE_URL: str = os.getenv("OLLAMA_BASE_URL", "http://localhost:11434")
+    OLLAMA_LLM_MODEL_NAME: str = os.getenv("OLLAMA_LLM_MODEL_NAME", "nomic-llama-2-7b")
+    OLLAMA_EMBEDDING_MODEL_NAME: str = os.getenv("OLLAMA_EMBEDDING_MODEL_NAME", "")
 
     # Laravel API
     LARAVEL_API_BASE_URL: str = os.getenv("LARAVEL_API_BASE_URL", "http://localhost:8000")
@@ -22,8 +25,12 @@ class Settings(BaseSettings):
     CHROMA_PERSIST_DIR: str = os.getenv("CHROMA_PERSIST_DIR", "./vector_store_db_llm_rag")
     CHROMA_COLLECTION_NAME: str = os.getenv("CHROMA_COLLECTION_NAME", "faq_document_vector")
 
+    # AI Provider
+    LLM_PROVIDER: str = os.getenv("LLM_PROVIDER", "google_genai")
+    EMBEDDING_PROVIDER: str = os.getenv("EMBEDDING_PROVIDER", "ollama")
+
     # Redis
-    REDIS_URL: str = os.getenv("REDIS_URL", "redis://localhost:6379/0")
+    REDIS_URL: str = os.getenv("REDIS_URL", "redis://localhost:6379")
 
 
     # Menambahkan model_config untuk konfigurasi Pydantic V2

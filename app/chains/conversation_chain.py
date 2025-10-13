@@ -1,6 +1,5 @@
 # app/chains/conversation_chain.py
 
-from langchain.chat_models import init_chat_model
 from langgraph.graph import StateGraph, START, END
 from app.core.config import settings
 from app.models.state import State
@@ -8,6 +7,7 @@ from app.utils.prompt_templates import general_rag_prompt, tracking_prompt, inte
 from app.agents.document_tracking_agent import DocumentTrackingAgent
 from app.utils.helpers import get_time, preprocess_question
 from app.core.redis_client import redis_client
+from app.services.llm_service import get_llm_model
 import json
 import logging
 
@@ -15,11 +15,7 @@ logger = logging.getLogger(__name__)
 
 # Inisialisasi LLM dan agent di tingkat modul/file (ini bisa dilakukan di sini)
 logger.info("Initializing LLM model in chain...")
-model = init_chat_model(
-    model=settings.LLM_MODEL_NAME,
-    model_provider="google_genai",
-    google_api_key=settings.GOOGLE_API_KEY
-)
+model = get_llm_model()
 logger.info("LLM model initialized in chain.")
 tracking_agent = DocumentTrackingAgent()
 
@@ -33,7 +29,7 @@ def retrieve_context_node(retriever): # Fungsi pembungkus untuk LangGraph yang m
         # Preprocess question sebelum mengirim ke retriever
         cleaned_question = preprocess_question(state["question"])
         # Panggil metode retriever
-        retrieved_docs = retriever.get_relevant_documents(cleaned_question)
+        retrieved_docs = retriever.invoke(cleaned_question)
         print(f"Retrieved {len(retrieved_docs)} documents.")
         return {"context": retrieved_docs}
     return node_func
@@ -63,47 +59,6 @@ async def classify_intent(state: State):
         intent = 'general' # Fallback
     print(f"Intent classified as: {intent}")
     return {"intent": intent}
-
-# Node untuk menangani intent pelacakan
-# async def handle_tracking_intent(state: State):
-#     print(f"Handling tracking intent for question: {state['question']}")
-#     from app.utils.helpers import extract_tracking_number # Impor di sini untuk menghindari circular import jika perlu
-#     # Cek apakah nomor registrasi ada di percakapan sebelumnya
-#     last_tracking_number = state.get('tracking_number')
-#     # Coba ekstrak dari pertanyaan saat ini
-#     current_tracking_number = extract_tracking_number(state['question'])
-
-#     # Jika tidak ada di state sebelumnya dan tidak ditemukan di pertanyaan saat ini
-#     if not last_tracking_number and not current_tracking_number:
-#         # Agent akan meminta nomor
-#         result = await tracking_agent.process_tracking_request(state['question'])
-#         if result['requires_number']:
-#             # Simpan bahwa intent adalah tracking, tapi belum ada nomor
-#             return {"answer": result['message'], "intent": "tracking_pending_number", "tracking_data": result['tracking_data']}
-#     else:
-#         # Gunakan nomor yang ditemukan
-#         number_to_use = current_tracking_number or last_tracking_number
-#         result = await tracking_agent.process_tracking_request(state['question'], number_to_use)
-#         # Perbarui nomor di state jika ditemukan di pertanyaan saat ini
-#         updated_state = {"tracking_data": result['tracking_data']}
-#         if current_tracking_number:
-#              updated_state['tracking_number'] = current_tracking_number
-#         if not result['requires_number']:
-#             # Jika berhasil mendapatkan data, kirimkan ke LLM untuk diformat
-#             current_date = get_time()
-#             chain = tracking_prompt | model
-#             formatted_response = await chain.ainvoke({
-#                 "question": state["question"],
-#                 "tracking_data": json.dumps(result['tracking_data'], indent=2, ensure_ascii=False),
-#                 "date": current_date
-#             })
-#             updated_state['answer'] = formatted_response.content
-#         else:
-#             # Jika masih meminta nomor (mungkin nomor salah)
-#             updated_state['answer'] = result['message']
-#         return updated_state
-#     # Fallback jika semua percobaan gagal
-#     return {"answer": "Maaf, saya tidak bisa memproses permintaan pelacakan dokumen saat ini."}
 
 # Node untuk menangani intent pelacakan
 async def handle_tracking_intent(state: State):

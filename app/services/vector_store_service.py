@@ -1,6 +1,6 @@
 import asyncio
 import logging
-from typing import List, Dict, Any
+from typing import List
 from langchain_chroma import Chroma
 from langchain_core.documents import Document
 from langchain_text_splitters import RecursiveCharacterTextSplitter
@@ -38,58 +38,53 @@ def _split_documents(documents: List[Document]) -> List[Document]:
     text_splitter = RecursiveCharacterTextSplitter(
         chunk_size=2000,
         chunk_overlap=300,
-        # separators=["\n\n", "\n", " ", ""], # Default separators
     )
-    splits = text_splitter.split_documents(documents)
+    # --- Tambahkan preprocessing di sini ---
+    # Misalnya, jika Anda ingin lowercase semua chunk sebelum disimpan
+    processed_docs = []
+    for doc in documents:
+        # Gunakan fungsi preprocess dari helpers
+        from app.utils.helpers import preprocess_question # Impor lokal untuk menghindari circular import jika perlu
+        processed_content = preprocess_question(doc.page_content) # Asumsikan preprocess_question hanya mengembalikan string yang diproses
+        processed_docs.append(Document(page_content=processed_content, metadata=doc.metadata))
+    # ---
+    splits = text_splitter.split_documents(processed_docs) # Gunakan dokumen yang telah diproses
     logger.info(f"Documents split into {len(splits)} chunks.")
     return splits
 
-async def initialize_vector_store():
+
+
+async def initialize_vector_store(force_refresh: bool = False):
     """
-    Inisialisasi atau muat ulang vector store dari data terbaru dari API.
-    Ini akan mengisi variabel global _vector_store dan _retriever.
+    force_refresh=True: Always rebuild from API
+    force_refresh=False: Use cached data jika ada (default)
     """
     global _vector_store, _retriever
-
-    logger.info("Initializing vector store...")
+    
     embeddings = get_embeddings_model()
-
-    # Ambil data terbaru dari API
-    raw_documents = await _fetch_all_data_from_apis()
-
-    # Split dokumen
-    splits = _split_documents(raw_documents) if raw_documents else []
-
-    # Inisialisasi ChromaDB
-    # Jika direktori persistensi sudah ada dan berisi koleksi, muat ulang
-    # Jika tidak, atau jika koleksi kosong, buat baru dari data API
-    try:
-        existing_store = Chroma(
-            collection_name=settings.CHROMA_COLLECTION_NAME,
-            embedding_function=embeddings,
-            persist_directory=settings.CHROMA_PERSIST_DIR,
-        )
-        if existing_store._collection.count() > 0:
-            logger.info(f"Loaded existing vector store with {existing_store._collection.count()} documents.")
-            # Jika Anda ingin memperbarui data, Anda perlu menghapus koleksi dan membuatnya kembali di sini
-            # Atau menggabungkan logikanya. Untuk sekarang, kita gunakan yang sudah ada jika tidak kosong.
-            # Kita asumsikan bahwa jika ada data, mungkin data tersebut valid atau perlu diperbarui secara eksplisit.
-            # Untuk inisialisasi awal, kita selalu ingin mengisi dari API.
-            # Kita hapus koleksi lama jika ingin menggantinya sepenuhnya.
-            # Kita gunakan logika di bawah untuk membangun ulang.
+    
+    # Coba load existing store jika tidak force refresh
+    if not force_refresh:
+        try:
+            existing_store = Chroma(
+                collection_name=settings.CHROMA_COLLECTION_NAME,
+                embedding_function=embeddings,
+                persist_directory=settings.CHROMA_PERSIST_DIR,
+            )
             existing_count = existing_store._collection.count()
-            logger.info(f"Found existing vector store with {existing_count} documents. Rebuilding from API data.")
-            # Hapus koleksi lama
-            existing_store.delete_collection()
-            logger.info("Deleted old collection.")
-        else:
-            logger.info("Found existing vector store but it's empty. Rebuilding from API data.")
-            # Koleksi ada tetapi kosong, hapus dan buat baru
-            existing_store.delete_collection()
-    except Exception as e:
-        logger.info(f"Could not load existing vector store: {e}. Creating a new one from API data...")
-
-    # Buat vector store baru dari data API yang telah dipecah
+            if existing_count > 0:
+                logger.info(f"Loaded existing vector store with {existing_count} documents.")
+                _vector_store = existing_store
+                _retriever = _vector_store.as_retriever(search_kwargs={"k": 3})
+                return _vector_store
+        except Exception as e:
+            logger.warning(f"Could not load existing store: {e}")
+    
+    # Jika tidak ada cached data atau force_refresh=True, rebuild dari API
+    logger.info("Rebuilding vector store from API...")
+    raw_documents = await _fetch_all_data_from_apis()
+    splits = _split_documents(raw_documents) if raw_documents else []
+    
     if splits:
         _vector_store = Chroma.from_documents(
             documents=splits,
@@ -97,20 +92,16 @@ async def initialize_vector_store():
             collection_name=settings.CHROMA_COLLECTION_NAME,
             persist_directory=settings.CHROMA_PERSIST_DIR,
         )
-        logger.info("New vector store created and saved successfully.")
+        logger.info("New vector store created from API data.")
     else:
-        # Jika tidak ada data dari API, buat vector store kosong
         _vector_store = Chroma(
             collection_name=settings.CHROMA_COLLECTION_NAME,
             embedding_function=embeddings,
             persist_directory=settings.CHROMA_PERSIST_DIR,
         )
-        logger.info("Created an empty vector store as no data was fetched from APIs.")
-
-    # Buat retriever dari vector store yang baru dibuat/dimuat
+        logger.info("Created empty vector store.")
+    
     _retriever = _vector_store.as_retriever(search_kwargs={"k": 3})
-    logger.info("Vector store and retriever initialized.")
-
     return _vector_store
 
 def get_retriever():
@@ -132,6 +123,17 @@ async def refresh_vector_store_data():
     global _vector_store, _retriever
     logger.info("Refreshing vector store data...")
     # Panggil ulang inisialisasi
-    await initialize_vector_store()
+    await initialize_vector_store(force_refresh=True)
     # initialize_vector_store sudah memperbarui _vector_store dan _retriever secara global
     logger.info("Vector store data refreshed.")
+
+# Fungsi opsional untuk mendapatkan instance vector store (jika diperlukan)
+def get_vector_store():
+    """
+    Mengembalikan vector store yang telah diinisialisasi oleh initialize_vector_store.
+    Pastikan initialize_vector_store telah dipanggil sebelum menggunakan fungsi ini.
+    """
+    if _vector_store is None:
+        logger.error("Vector store is not initialized. Call initialize_vector_store first.")
+        raise RuntimeError("Vector store is not initialized. Call initialize_vector_store first.")
+    return _vector_store

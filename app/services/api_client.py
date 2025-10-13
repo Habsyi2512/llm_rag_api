@@ -9,7 +9,7 @@ headers = {
 
 async def fetch_faqs_from_api() -> List[Dict[str, Any]]:
   """Mengambil data FAQ dari API Laravel."""
-  url = f"{settings.LARAVEL_API_BASE_URL}/api/faqs"
+  url = f"{settings.LARAVEL_API_BASE_URL}/faqs"
   timeout = httpx.Timeout(settings.LARAVEL_API_TIMEOUT)
 
   try:
@@ -41,7 +41,7 @@ async def fetch_faqs_from_api() -> List[Dict[str, Any]]:
   
 async def fetch_documents_from_api() -> List[Dict[str, Any]]:
     """Mengambil data dokumen (PDF yang sudah diparse) dari API Laravel."""
-    url = f"{settings.LARAVEL_API_BASE_URL}/api/documents"
+    url = f"{settings.LARAVEL_API_BASE_URL}/documents"
     timeout = httpx.Timeout(settings.LARAVEL_API_TIMEOUT)
     try:
         async with httpx.AsyncClient(timeout=timeout) as client:
@@ -69,7 +69,7 @@ async def fetch_documents_from_api() -> List[Dict[str, Any]]:
 async def fetch_tracking_status_from_api(tracking_number: str) -> Optional[Dict[str, Any]]:
     """Mengambil status dokumen berdasarkan nomor registrasi dari API Laravel."""
     # Endpoint ini mungkin perlu dibuat di Laravel
-    url = f"{settings.LARAVEL_API_BASE_URL}/api/tracking/{tracking_number}"
+    url = f"{settings.LARAVEL_API_BASE_URL}/tracking/{tracking_number}"
     timeout = httpx.Timeout(settings.LARAVEL_API_TIMEOUT)
     try:
         async with httpx.AsyncClient(timeout=timeout) as client:

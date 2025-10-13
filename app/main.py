@@ -1,30 +1,51 @@
+# app/main.py
+
 from contextlib import asynccontextmanager
-from fastapi import FastAPI, HTTPException, Request
-from app.core.config import settings
-from app.services.vector_store_service import initialize_vector_store, get_retriever
+from fastapi import FastAPI, HTTPException
+import logging
+
+# Impor fungsi-fungsi dari service
+from app.services.vector_store_service import initialize_vector_store, get_retriever, refresh_vector_store_data
 from app.chains.conversation_chain import create_conversation_graph
 from app.schemas.requests import ChatRequest, ChatResponse
 from app.models.state import State
-import asyncio
 
-# Variabel global untuk menyimpan komponen yang diinisialisasi
-vector_store = None
-retriever = None
-graph = None
+logger = logging.getLogger(__name__)
+
+# Variabel global hanya untuk komponen yang dibutuhkan oleh endpoint
+_graph = None
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    global vector_store, retriever, graph
+    global _graph # Kita perlu memperbarui variabel global graph
     print("Starting up LLM RAG Service...")
-    # Inisialisasi Vector Store
-    vector_store = await initialize_vector_store()
-    # Inisialisasi Retriever
-    retriever = get_retriever()
-    # Inisialisasi LangGraph
-    graph = create_conversation_graph(retriever)
+    logger.info("Starting up LLM RAG Service...")
+
+    try:
+        # 1. Inisialisasi Vector Store dan Retriever melalui service
+        # Ini akan mengisi variabel global _vector_store dan _retriever di vector_store_service
+        await initialize_vector_store(force_refresh=False) # Gunakan cache jika ada saat startup
+        logger.info("Vector store initialized via service.")
+
+        # 2. Ambil retriever yang telah dibuat oleh service
+        # Fungsi get_retriever dari vector_store_service tidak menerima argumen.
+        # Ia mengakses _retriever yang sudah diinisialisasi secara global oleh initialize_vector_store.
+        retriever = get_retriever()
+        logger.info("Retriever obtained from service.")
+
+        # 3. Inisialisasi LangGraph dengan retriever yang benar
+        _graph = create_conversation_graph(retriever) # Kirim retriever ke fungsi pembuatan graph
+        logger.info("LangGraph compiled and ready.")
+    except Exception as e:
+        logger.error(f"Failed to initialize services during startup: {e}")
+        print(f"Failed to initialize services during startup: {e}") # Juga log ke console
+        raise # Melempar error agar aplikasi tidak berjalan jika inisialisasi gagal
+
     print("LLM RAG Service is ready!")
+    logger.info("LLM RAG Service is ready!")
     yield
     print("Shutting down LLM RAG Service...")
+    logger.info("Shutting down LLM RAG Service...")
 
 app = FastAPI(
     title="Chatbot Layanan Informasi Publik Disdukcapil Kabupaten Kepulauan Anambas",
@@ -33,8 +54,9 @@ app = FastAPI(
 
 @app.post("/chat", response_model=ChatResponse)
 async def chatbot_endpoint(request: ChatRequest):
-    global graph
-    if not graph:
+    global _graph
+    if not _graph:
+        logger.error("Graph is not ready!")
         raise HTTPException(status_code=503, detail="Service not ready, please try again later.")
 
     # State awal
@@ -51,7 +73,7 @@ async def chatbot_endpoint(request: ChatRequest):
 
     try:
         # Jalankan graph
-        final_state = await graph.ainvoke(initial_state)
+        final_state = await _graph.ainvoke(initial_state) # Gunakan _graph yang benar
         response_message = final_state.get("answer", "Maaf, saya tidak dapat memproses permintaan Anda saat ini.")
         intent = final_state.get("intent", "general")
         tracking_data = final_state.get("tracking_data", None)
@@ -62,58 +84,31 @@ async def chatbot_endpoint(request: ChatRequest):
             tracking_data=tracking_data
         )
     except Exception as e:
-        print(f"Error processing chat request: {e}")
+        logger.error(f"Error processing chat request: {e}")
+        print(f"Error processing chat request: {e}") # Juga log ke console
         raise HTTPException(status_code=500, detail="Internal server error during processing.")
 
 @app.get("/health")
 async def health_check():
-    return {"status": "ok", "llm_ready": bool(graph)}
+    return {"status": "ok", "llm_ready": bool(_graph)}
 
 # --- Endpoint untuk refresh data ke vector store ---
 @app.post("/refresh-data")
 async def refresh_data():
-    global vector_store, retriever, graph
+    global _graph # Kita perlu memperbarui graph setelah refresh data
     try:
-        # Ambil ulang data dari API
-        from app.services.api_client import fetch_faqs_from_api, fetch_documents_from_api
-        faq_docs_raw = await fetch_faqs_from_api()
-        doc_docs_raw = await fetch_documents_from_api()
-        all_docs_raw = faq_docs_raw + doc_docs_raw
+        # Panggil fungsi refresh dari service
+        await refresh_vector_store_data()
 
-        if not all_docs_raw:
-            return {"message": "No new data fetched from APIs."}
+        # Ambil retriever yang baru
+        retriever = get_retriever() # Fungsi ini dari vector_store_service
 
-        from langchain_core.documents import Document
-        from langchain_text_splitters import RecursiveCharacterTextSplitter
-        documents = [Document(page_content=d['page_content'], metadata=d['metadata']) for d in all_docs_raw]
+        # Buat graph baru dengan retriever yang baru
+        _graph = create_conversation_graph(retriever)
+        logger.info("Graph recreated after data refresh.")
 
-        text_splitter = RecursiveCharacterTextSplitter(chunk_size=2000, chunk_overlap=300)
-        splits = text_splitter.split_documents(documents)
-
-        # Dapatkan nama koleksi dari config
-        collection_name = settings.CHROMA_COLLECTION_NAME
-
-        # Hapus koleksi lama
-        vector_store.delete_collection(collection_name=collection_name)
-        print(f"Deleted old collection: {collection_name}")
-
-        # Buat koleksi baru
-        new_vector_store = await initialize_vector_store() # Fungsi ini sekarang membuat koleksi baru jika tidak ada
-        # Atau gunakan Chroma.from_documents secara langsung untuk koleksi tertentu
-        # new_vector_store = Chroma.from_documents(
-        #     documents=splits,
-        #     embedding=embeddings_model, # Anda perlu mengakses embeddings_model
-        #     collection_name=collection_name,
-        #     persist_directory=settings.CHROMA_PERSIST_DIR,
-        # )
-        # vector_store = new_vector_store
-
-        # Perbarui retriever dan graph
-        retriever = get_retriever(new_vector_store)
-        graph = create_conversation_graph(retriever) # Recreate graph dengan retriever baru
-        vector_store = new_vector_store # Update global var
-
-        return {"message": "Data refreshed successfully."}
+        return {"message": "Data and graph refreshed successfully."}
     except Exception as e:
-        print(f"Error refreshing  {e}")
-        raise HTTPException(status_code=500, detail=f"Error refreshing data: {e}")
+        logger.error(f"Error refreshing  {e}")
+        print(f"Error refreshing  {e}") # Juga log ke console
+        raise HTTPException(status_code=500, detail=f"Error refreshing  {e}")
