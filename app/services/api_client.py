@@ -2,10 +2,14 @@ import httpx
 from app.core.config import settings
 from typing import List, Dict, Any, Optional
 
+headers = {
+    "Authorization": f"Bearer {settings.LARAVEL_API_TOKEN}",
+    "Accept" : "application/json"
+    }
+
 async def fetch_faqs_from_api() -> List[Dict[str, Any]]:
   """Mengambil data FAQ dari API Laravel."""
   url = f"{settings.LARAVEL_API_BASE_URL}/api/faqs"
-  headers = {"Authorization": f"Bearer {settings.LARAVEL_API_TOKEN}"}
   timeout = httpx.Timeout(settings.LARAVEL_API_TIMEOUT)
 
   try:
@@ -38,7 +42,6 @@ async def fetch_faqs_from_api() -> List[Dict[str, Any]]:
 async def fetch_documents_from_api() -> List[Dict[str, Any]]:
     """Mengambil data dokumen (PDF yang sudah diparse) dari API Laravel."""
     url = f"{settings.LARAVEL_API_BASE_URL}/api/documents"
-    headers = {"Authorization": f"Bearer {settings.LARAVEL_API_TOKEN}"}
     timeout = httpx.Timeout(settings.LARAVEL_API_TIMEOUT)
     try:
         async with httpx.AsyncClient(timeout=timeout) as client:
@@ -66,8 +69,7 @@ async def fetch_documents_from_api() -> List[Dict[str, Any]]:
 async def fetch_tracking_status_from_api(tracking_number: str) -> Optional[Dict[str, Any]]:
     """Mengambil status dokumen berdasarkan nomor registrasi dari API Laravel."""
     # Endpoint ini mungkin perlu dibuat di Laravel
-    url = f"{settings.LARAVEL_API_BASE_URL}/tracking/{tracking_number}"
-    headers = {"Authorization": f"Bearer {settings.LARAVEL_API_TOKEN}"}
+    url = f"{settings.LARAVEL_API_BASE_URL}/api/tracking/{tracking_number}"
     timeout = httpx.Timeout(settings.LARAVEL_API_TIMEOUT)
     try:
         async with httpx.AsyncClient(timeout=timeout) as client:
@@ -82,3 +84,9 @@ async def fetch_tracking_status_from_api(tracking_number: str) -> Optional[Dict[
     except httpx.RequestError as e:
         print(f"Request error fetching Tracking Status for {tracking_number}: {e}")
         return None
+
+
+
+if __name__ == "__main__":
+  data =  fetch_faqs_from_api()
+  print(data)

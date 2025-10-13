@@ -8,11 +8,13 @@ load_dotenv()
 class Settings(BaseSettings):
     # Google
     GOOGLE_API_KEY: str = os.getenv("GOOGLE_API_KEY", "")
-    LLM_MODEL_NAME: str = os.getenv("LLM_MODEL_NAME", "gemini-2.0-flash")
-    EMBEDDING_MODEL_NAME: str = os.getenv("EMBEDDING_MODEL_NAME", "models/embedding-001")
+    LLM_MODEL_NAME: str = os.getenv("LLM_MODEL_NAME", "gemini-2.5-flash")
+    EMBEDDING_MODEL_NAME: str = os.getenv("EMBEDDING_MODEL_NAME", "mxbai-embed-large:latest")
+
+    OLLAMA_BASE_URL: str = os.getenv("OLLAMA_BASE_URL", "http://localhost:11434")
 
     # Laravel API
-    LARAVEL_API_BASE_URL: str = os.getenv("LARAVEL_API_BASE_URL", "http://localhost:8000/api")
+    LARAVEL_API_BASE_URL: str = os.getenv("LARAVEL_API_BASE_URL", "http://localhost:8000")
     LARAVEL_API_TIMEOUT: int = int(os.getenv("LARAVEL_API_TIMEOUT", "30"))
     LARAVEL_API_TOKEN: str = os.getenv("LARAVEL_API_TOKEN", "token")
 
@@ -32,3 +34,5 @@ class Settings(BaseSettings):
 
 # Inisialisasi instance settings
 settings = Settings()
+
+# print settings
