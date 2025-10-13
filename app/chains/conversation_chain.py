@@ -30,7 +30,11 @@ def retrieve_context_node(retriever): # Fungsi pembungkus untuk LangGraph yang m
         cleaned_question = preprocess_question(state["question"])
         # Panggil metode retriever
         retrieved_docs = retriever.invoke(cleaned_question)
+
+                # --- TAMBAHKAN LOGGING KONTEKS DI SINI ---
         print(f"Retrieved {len(retrieved_docs)} documents.")
+        logger.info(f"Retrieved {len(retrieved_docs)} documents for question: '{state['question']}'")
+        print(f"retrieved_docs oi: \n{retrieved_docs}")
         return {"context": retrieved_docs}
     return node_func
 

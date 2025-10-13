@@ -11,7 +11,6 @@ def get_llm_model():
     if provider == "google":
         print("Initializing Google LLM model...")
         print("GOOGLE_LLM_MODEL_NAME:", settings.GOOGLE_LLM_MODEL_NAME)
-        print("GOOGLE_API_KEY:", settings.GOOGLE_API_KEY)
         logger.info("Initializing Google LLM model...")
         from langchain_google_genai import ChatGoogleGenerativeAI
         if not settings.GOOGLE_API_KEY:

@@ -1,8 +1,9 @@
 # app/main.py
 
 from contextlib import asynccontextmanager
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, Security
 import logging
+from app.auth import verify_api_key
 
 # Impor fungsi-fungsi dari service
 from app.services.vector_store_service import initialize_vector_store, get_retriever, refresh_vector_store_data
@@ -53,7 +54,7 @@ app = FastAPI(
 )
 
 @app.post("/chat", response_model=ChatResponse)
-async def chatbot_endpoint(request: ChatRequest):
+async def chatbot_endpoint(request: ChatRequest, api_key: str = Security(verify_api_key)):
     global _graph
     if not _graph:
         logger.error("Graph is not ready!")

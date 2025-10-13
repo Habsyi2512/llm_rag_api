@@ -36,8 +36,8 @@ def _split_documents(documents: List[Document]) -> List[Document]:
     """Memecah dokumen menjadi potongan-potongan (chunks) yang lebih kecil."""
     logger.info("Splitting documents...")
     text_splitter = RecursiveCharacterTextSplitter(
-        chunk_size=2000,
-        chunk_overlap=300,
+        chunk_size=1000,
+        chunk_overlap=150,
     )
     # --- Tambahkan preprocessing di sini ---
     # Misalnya, jika Anda ingin lowercase semua chunk sebelum disimpan
