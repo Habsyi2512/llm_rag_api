@@ -4,6 +4,7 @@ from contextlib import asynccontextmanager
 from fastapi import FastAPI, HTTPException, Security
 import logging
 from app.auth import verify_api_key
+from fastapi.middleware.cors import CORSMiddleware
 
 # Impor fungsi-fungsi dari service
 from app.services.vector_store_service import initialize_vector_store, get_retriever, refresh_vector_store_data
@@ -51,6 +52,14 @@ async def lifespan(app: FastAPI):
 app = FastAPI(
     title="Chatbot Layanan Informasi Publik Disdukcapil Kabupaten Kepulauan Anambas",
     lifespan=lifespan
+)
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  # Semua origin diizinkan
+    allow_credentials=True,
+    allow_methods=["*"],  # Semua metode HTTP diizinkan (GET, POST, dsb)
+    allow_headers=["*"],  # Semua header diizinkan
 )
 
 @app.post("/chat", response_model=ChatResponse)
