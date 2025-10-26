@@ -6,7 +6,6 @@ from app.models.state import State
 from app.utils.prompt_templates import general_rag_prompt, tracking_prompt, intent_classification_prompt
 from app.agents.document_tracking_agent import DocumentTrackingAgent
 from app.utils.helpers import get_time, preprocess_question
-from app.core.redis_client import redis_client
 from app.services.llm_service import get_llm_model
 import json
 import logging
@@ -23,7 +22,7 @@ tracking_agent = DocumentTrackingAgent()
 # ... (definisi fungsi-fungsi node seperti sebelumnya, tapi tanpa mengakses retriever global di sini) ...
 
 # Node untuk mengambil konteks dari retriever
-def retrieve_context_node(retriever): # Fungsi pembungkus untuk LangGraph yang menerima retriever
+def retrieve_context_node(retriever: object): # Fungsi pembungkus untuk LangGraph yang menerima retriever
     async def node_func(state: State):
         print(f"Retrieving context for question: {state['question']}")
         # Preprocess question sebelum mengirim ke retriever
