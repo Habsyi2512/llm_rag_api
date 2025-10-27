@@ -25,6 +25,7 @@ async def fetch_faqs_from_api() -> List[Dict[str, Any]]:
         content = f"Pertanyaan: {item.get('question', '')}\nJawaban: {item.get('answer', '')}"
         processed_faqs.append({
           "page_content": content,
+          "id": item.get('id', ''), 
           "metadata" : {
             "source": "faq",
             "id" : item.get('id', '')
@@ -56,6 +57,7 @@ async def fetch_documents_from_api() -> List[Dict[str, Any]]:
                 if content: # Pastikan konten tidak kosong
                     processed_docs.append({
                         "page_content": content,
+                        "id": item.get('id', ''), 
                         "metadata": {"source": "document", "id": item.get('id')}
                     })
             return processed_docs
@@ -74,6 +76,7 @@ async def fetch_tracking_status_from_api(tracking_number: str) -> Optional[Dict[
     try:
         async with httpx.AsyncClient(timeout=timeout) as client:
             response = await client.get(url, headers=headers)
+            print("Response tracking number:", response)
             response.raise_for_status()
             data = response.json()
             # Asumsi API mengembalikan data status

@@ -1,7 +1,7 @@
 # app/main.py
 
 from contextlib import asynccontextmanager
-from fastapi import FastAPI, HTTPException, Security
+from fastapi import FastAPI, HTTPException, Security, Body
 import logging
 from app.auth import verify_api_key
 from fastapi.middleware.cors import CORSMiddleware
@@ -11,6 +11,16 @@ from app.services.vector_store_service import initialize_vector_store, get_retri
 from app.chains.conversation_chain import create_conversation_graph
 from app.schemas.requests import ChatRequest, ChatResponse
 from app.models.state import State
+
+from app.services.vector_store_service import (
+    initialize_vector_store,
+    get_retriever,
+    refresh_vector_store_data,
+    update_faq_in_vector_store,
+    delete_faq_from_vector_store,
+    add_faq_to_vector_store
+)
+
 
 logger = logging.getLogger(__name__)
 
@@ -122,3 +132,71 @@ async def refresh_data():
         logger.error(f"Error refreshing  {e}")
         print(f"Error refreshing  {e}") # Juga log ke console
         raise HTTPException(status_code=500, detail=f"Error refreshing  {e}")
+    
+@app.post("/vector-store/faqs")
+async def create_faq_endpoint(
+    payload: dict = Body(...),
+    api_key: str = Security(verify_api_key)
+):
+    """
+    Tambahkan FAQ baru ke vector store
+    Payload contoh:
+    {
+        "content": "Pertanyaan dan jawaban baru",
+        "metadata": {"faq_id": "123", "created_at": "2025-10-27T00:00:00Z"}
+    }
+    """
+    content = payload.get("content")
+    metadata = payload.get("metadata", {})
+
+    if not content:
+        raise HTTPException(status_code=400, detail="Content is required")
+
+    try:
+        result = await add_faq_to_vector_store(content, metadata)
+        return result
+    except Exception as e:
+        logger.error(f"Error creating FAQ: {e}")
+        raise HTTPException(status_code=500, detail=f"Error creating FAQ: {e}")
+    
+@app.put("/vector-store/faqs/{faq_id}")
+async def update_faq_endpoint(
+    faq_id: str,
+    payload: dict = Body(...),
+    api_key: str = Security(verify_api_key)
+):
+    """
+    Update FAQ di vector store berdasarkan faq_id
+    Payload contoh:
+    {
+        "content": "Pertanyaan dan jawaban baru",
+        "metadata": {"created_at": "2025-10-27T00:00:00Z"}
+    }
+    """
+    content = payload.get("content")
+    metadata = payload.get("metadata", None)
+
+    if not content:
+        raise HTTPException(status_code=400, detail="Content is required")
+
+    try:
+        result = await update_faq_in_vector_store(faq_id, content, metadata)
+        return result
+    except Exception as e:
+        logger.error(f"Error updating FAQ {faq_id}: {e}")
+        raise HTTPException(status_code=500, detail=f"Error updating FAQ {faq_id}: {e}")
+    
+@app.delete("/vector-store/faqs/{faq_id}")
+async def delete_faq_endpoint(
+    faq_id: str,
+    api_key: str = Security(verify_api_key)
+):
+    """
+    Delete FAQ di vector store berdasarkan faq_id
+    """
+    try:
+        result = await delete_faq_from_vector_store(faq_id)
+        return result
+    except Exception as e:
+        logger.error(f"Error deleting FAQ {faq_id}: {e}")
+        raise HTTPException(status_code=500, detail=f"Error deleting FAQ {faq_id}: {e}")
