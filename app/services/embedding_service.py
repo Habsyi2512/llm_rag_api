@@ -1,5 +1,3 @@
-# from langchain_google_genai import GoogleGenerativeAIEmbeddings
-
 from langchain_ollama import OllamaEmbeddings
 import logging
 from app.core.config import settings
@@ -7,7 +5,7 @@ from app.core.config import settings
 logger = logging.getLogger(__name__)
 
 def get_embeddings_model():
-    print("Initializing Ollama embeddings model...")
+    print("Initializing Ollama embeddings model uy...")
     logger.info("Initializing Ollama embeddings model...")
 
     # Gunakan model embedding dari Ollama
@@ -17,4 +15,5 @@ def get_embeddings_model():
         base_url=settings.OLLAMA_BASE_URL # Contoh: "http://localhost:11434"
     )
     logger.info("Ollama embeddings model initialized.")
+    print("embedding model berjalan ✅")
     return embeddings

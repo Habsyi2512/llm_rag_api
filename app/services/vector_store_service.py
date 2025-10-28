@@ -19,7 +19,7 @@ async def _fetch_all_data_from_apis() -> List[Document]:
     logger.info("Fetching data from Laravel APIs...")
     
     faq_docs_raw = await fetch_faqs_from_api()
-    # doc_docs_raw = await fetch_documents_from_api()
+    doc_docs_raw = await fetch_documents_from_api()
     all_docs_raw = []
 
     # ===== FAQ =====
@@ -38,18 +38,18 @@ async def _fetch_all_data_from_apis() -> List[Document]:
         all_docs_raw.append(d)
 
     # ===== Documents =====
-    # for d in doc_docs_raw:
-    #     metadata = d.get('metadata', {})
-    #     if 'id' in d:
-    #         metadata['doc_id'] = str(d['id'])
-    #     metadata['type'] = 'document'
-    #     metadata['source'] = metadata.get('source', 'document')
-    #     if 'created_at' in d:
-    #         metadata['created_at'] = d['created_at']
-    #     if 'updated_at' in d:
-    #         metadata['updated_at'] = d['updated_at']
-    #     d['metadata'] = metadata
-    #     all_docs_raw.append(d)
+    for d in doc_docs_raw:
+        metadata = d.get('metadata', {})
+        if 'id' in d:
+            metadata['doc_id'] = str(d['id'])
+        metadata['type'] = 'document'
+        metadata['source'] = metadata.get('source', 'document')
+        if 'created_at' in d:
+            metadata['created_at'] = d['created_at']
+        if 'updated_at' in d:
+            metadata['updated_at'] = d['updated_at']
+        d['metadata'] = metadata
+        all_docs_raw.append(d)
 
     if not all_docs_raw:
         logger.warning("No data fetched from APIs. Vector store might be empty.")

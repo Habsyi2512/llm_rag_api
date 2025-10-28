@@ -10,10 +10,10 @@ headers = {
 async def fetch_faqs_from_api() -> List[Dict[str, Any]]:
   """Mengambil data FAQ dari API Laravel."""
   url = f"{settings.LARAVEL_API_BASE_URL}/faqs"
-  timeout = httpx.Timeout(settings.LARAVEL_API_TIMEOUT)
+  # timeout = httpx.Timeout(settings.LARAVEL_API_TIMEOUT)
 
   try:
-    async with httpx.AsyncClient(timeout=timeout) as client:
+    async with httpx.AsyncClient() as client:
       response = await client.get(url, headers=headers)
       response.raise_for_status()
       data = response.json()
@@ -72,13 +72,16 @@ async def fetch_tracking_status_from_api(tracking_number: str) -> Optional[Dict[
     """Mengambil status dokumen berdasarkan nomor registrasi dari API Laravel."""
     # Endpoint ini mungkin perlu dibuat di Laravel
     url = f"{settings.LARAVEL_API_BASE_URL}/tracking/{tracking_number}"
-    timeout = httpx.Timeout(settings.LARAVEL_API_TIMEOUT)
+
+    print("Fetching tracking status from URL yeh:", url)
+    timeout = httpx.Timeout(settings.LARAVEL_API_TIMEOUT, connect=5.0)
     try:
         async with httpx.AsyncClient(timeout=timeout) as client:
             response = await client.get(url, headers=headers)
             print("Response tracking number:", response)
             response.raise_for_status()
             data = response.json()
+            print("Data tracking number:", data)
             # Asumsi API mengembalikan data status
             return data.get('data', data)
     except httpx.HTTPStatusError as e:
