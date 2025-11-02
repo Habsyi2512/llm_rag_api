@@ -62,11 +62,6 @@ async def _download_pdf_and_get_chunks(pdf_url: str, metadata: Dict) -> List:
             "content" : full_text,
             "metadata": dict(metadata)
         }]
-        # for doc in documents:
-        #     combined.append({
-        #         "content": doc.page_content,
-        #         "metadata": dict(metadata)
-        #     })
 
         # 4. Split ke chunks (menggunakan fungsi yang sudah ada)
         chunks = split_documents_to_chunks(combined)
