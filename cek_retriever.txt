@@ -1,23 +1,14 @@
 [
-    Document(
-        id='e9cb5dfa-3553-4cf8-a075-a497a1349805', 
-        metadata={
-            'section_index': '0', 
-            'source': 'faq', 
-            'section_title': 'pertanyaan: Apa persyaratan umum pembuatan KK baru?', 
-            'faq_id': '24'
-            }, 
-        page_content='
-        pertanyaan: Apa persyaratan umum pembuatan KK baru?
-        jawaban: Syarat antara lain formulir permohonan, KK asli lama atau bukti perpindahan, fotokopi legalisir akta kelahiran, buku nikah, akta kematian, atau dokumen pendukung lainnya sesuai kondisi.'
-        ), 
-    Document(
-        id='04883136-76d2-4504-943f-e7614db57cd2', 
-        metadata={
-            'source': 'faq', 
-            'section_index': '0', 
-            'section_title': 'pertanyaan: Gimana cara bikin KTP baru?', 
-            'faq_id': '83'
-            }, 
-        page_content='pertanyaan: Gimana cara bikin KTP baru?\njawaban: Untuk membuat KTP-el baru, persyaratannya antara lain fotokopi KK; proses meliputi pengambilan nomor antrian, perekaman data dan foto, lalu pengambilan KTP setelah pemberitahuan. Waktu proses maksimal 3 hari kerja setelah semua persyaratan lengkap.'), 
-    Document(id='44ca15e1-366b-4347-8738-34ff9a2df14e', metadata={'section_title': 'Untuk pembuatan Kartu Keluarga Baru, memiliki persyaratan sebagai berikut:  ', 'title': 'dokumen-disdukcapil', 'source': 'document', 'section_index': '13'}, page_content='Untuk pembuatan Kartu Keluarga Baru, memiliki persyaratan sebagai berikut:  \n- Mengisi Formulir  \n- KK Asli Lama  \n- Fotocopy legalisir  \n- Buku Nikah/ Kutipan Akta Perkawinan  \n- Surat Keterangan Pindah Datang dari Daerah Asal  \n- Surat Keterangan Pindah Datang dari Luar Negeri yang diterbitkan oleh Instansi Pelaksana bagi  \nWNI yang datang dari Luar Negeri karena pindah  \n- Surat Keterangan Pengganti Tanda Identitas bagi Penduduk Rentan Administrasi Kependudukan \n- Bagi penduduk yang mengalami perubahan alamat:  \n- Surat Keterangan Pindah dari RT/RW  \n- Fotocopy legalisir Akta Kelahiran  \n- Fotocopy legalisir Ijazah  \n- Fotocopy legalisir Akta Perkawinan  \n- Fotocopy legalisir Akta Kematian  \n- Fotocopy legalisir Akta Perceraian  \n- Fotocopy legalisir Surat Keterangan Ganti Nama  \n- Fotocopy legalisir Surat Keterangan Pindah Agama  \n- Data Perkawinan dari Kementerian yang menyelenggarakan urusan pemerintahan di bidang \nagama  \n- Bagi penduduk yang belum memiliki NIK melampirkan  \n- Fotocopy legalisir Akta Kelahiran  \n- Fotocopy legalisir Ijazah  \n- Fotocopy legalisir Akta Perkawinan  \n- Fotocopy legalisir Akta Kematian  \n- Fotocopy legalisir Akta Perceraian  \n- Fotocopy legalisir Surat Keterangan Ganti Nama  \n- Fotocopy legalisir Surat Keterangan Pindah Agama'), Document(id='72ebf9f5-8d69-4a21-a4d9-0fd23b8fc49b', metadata={'section_title': 'Untuk pembuatan Kartu Keluarga karena Perubahan Data, memiliki persyaratan sebagai berikut:  ', 'title': 'dokumen-disdukcapil', 'section_index': '14', 'source': 'document'}, page_content='Untuk pembuatan Kartu Keluarga karena Perubahan Data, memiliki persyaratan sebagai berikut:  \nMengisi Formulir  \n- KK Asli Lama  \n- Fotocopy legalisir  \n- Akta Kelahiran/ Bukti pelaporan peristiwa penting yang dialami penduduk (perubahan \ndilaporkan)')]
+  {
+    'id': 1, 
+    'title': 'dokumen-disdukcapil', 
+    'source_path': 'public/documents/01K8P91NQGDQEMEA696ATCWQE5.pdf', 
+    'content': 'CONTACT US  \terima.  \nLayanan penerbitan Akta Perkawinan tidak dikenakan biaya (gratis).', 
+    'metadata': {
+      'uploader': 'Habsyi', 
+      'uploaded_at': '2025-10-28 20:44:41'
+      }, 
+    'created_at': '2025-10-28T20:44:41.000000Z', 
+    'updated_at': '2025-10-28T20:44:41.000000Z'
+  }
+]

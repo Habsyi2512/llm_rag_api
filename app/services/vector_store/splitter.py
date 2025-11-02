@@ -31,7 +31,7 @@ def split_documents_to_chunks(
 ) -> List[Document]:
     """
     docs: iterable of dict dengan key:
-      - id atau faq_id
+      - doc_id atau faq_id
       - content
       - metadata (opsional)
     """
@@ -48,25 +48,19 @@ def split_documents_to_chunks(
     for doc in docs:
         content = doc.get("content") or ""
         base_meta = dict(doc.get("metadata", {}))
-        doc_id = doc.get("id") or doc.get("faq_id")
+        data_source = base_meta.get("source", "")
 
-        # Jika teks panjang dan mengandung marker ###
         if "###" in content:
+            print("Detected manual delimiter ### in document from source:", data_source)
+            print("doc content preview:", content[:100])
             sections = pre_split_by_marker(content)
         else:
             sections = [content]
 
-        for section_idx, section in enumerate(sections):
-            # Split ulang tiap section jika terlalu panjang
+        for section in sections:
             chunks = text_splitter.split_text(section)
-            section_title = section.split("\n", 1)[0][:100]  # ambil judul atau baris pertama
-            for idx, chunk in enumerate(chunks):
+            for chunk in chunks:
                 meta = dict(base_meta)
-                meta.update({
-                    "doc_id": doc_id,
-                    "section_index": str(section_idx),
-                    "section_title": section_title
-                })
                 result.append(Document(page_content=chunk, metadata=meta))
 
     return result

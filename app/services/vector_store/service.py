@@ -1,9 +1,7 @@
 # app/services/vector_store/service.py
-import logging
-import asyncio
-import inspect
-from typing import Optional, List, Dict, Any, Callable
-
+import logging, asyncio, inspect, tempfile, httpx, os
+from typing import Optional, Dict, Any, Callable, List
+from langchain_community.document_loaders import PyPDFLoader
 from app.services.vector_store.base import get_state
 from app.services.vector_store.fetcher import fetch_all_faqs, fetch_all_documents
 from app.services.vector_store.splitter import split_documents_to_chunks
@@ -11,11 +9,13 @@ from app.services.vector_store.crud import (
     add_documents as crud_add_documents,
     delete_documents_by_faq_id,
     update_documents_by_faq_id,
+    delete_documents_by_doc_id,
+    update_documents_by_doc_id
 )
+from app.services.api_client import download_file_to_temp
 from app.services.embedding_service import get_embeddings_model
 from app.core.config import settings
 
-# langchain_chroma import depends on your environment; keep try/except
 try:
     from langchain_chroma import Chroma
 except Exception:
@@ -33,12 +33,55 @@ async def maybe_async_call(fn: Callable, *args, **kwargs):
     """
     if asyncio.iscoroutinefunction(fn):
         return await fn(*args, **kwargs)
-    # if it's a callable but returns an awaitable (rare), handle that too
     result = fn(*args, **kwargs)
     if inspect.isawaitable(result):
         return await result
-    # sync result
     return await asyncio.to_thread(lambda: result)
+
+async def _download_pdf_and_get_chunks(pdf_url: str, metadata: Dict) -> List:
+    """Mengunduh PDF secara temporer, mengekstrak teks, dan memecah menjadi chunks."""
+    temp_path = None
+    
+    try:
+        # 1. Download PDF ke file temporer
+        temp_path = await download_file_to_temp(pdf_url, suffix=".pdf")
+        
+        # 2. Load Dokumen menggunakan PyPDFLoader (membutuhkan eksekusi di thread)
+        def sync_load_pdf():
+            loader = PyPDFLoader(temp_path)
+            # load() dari PyPDFLoader biasanya blocking/sync
+            return loader.load() 
+
+        documents = await asyncio.to_thread(sync_load_pdf)
+
+        full_text = ""
+        for doc in documents:
+            full_text += doc.page_content + "\n"
+
+        combined = [{
+            "content" : full_text,
+            "metadata": dict(metadata)
+        }]
+        # for doc in documents:
+        #     combined.append({
+        #         "content": doc.page_content,
+        #         "metadata": dict(metadata)
+        #     })
+
+        # 4. Split ke chunks (menggunakan fungsi yang sudah ada)
+        chunks = split_documents_to_chunks(combined)
+        return chunks
+
+    except httpx.HTTPStatusError as e:
+        logger.error(f"HTTP Error {e.response.status_code} accessing PDF: {pdf_url}")
+        raise RuntimeError(f"Gagal mengunduh PDF: {e}")
+    except Exception as e:
+        logger.exception(f"Error processing PDF from {pdf_url}: {e}")
+        raise RuntimeError(f"Gagal memproses PDF: {e}")
+    finally:
+        # 5. Bersihkan file temporer
+        if temp_path and os.path.exists(temp_path):
+            os.unlink(temp_path)
 
 
 async def _create_or_connect_chroma(
@@ -54,14 +97,11 @@ async def _create_or_connect_chroma(
     if Chroma is None:
         raise RuntimeError("Chroma client not available; ensure langchain_chroma is installed")
 
-    # Use settings defaults if not provided
     persist_directory = persist_directory or settings.CHROMA_PERSIST_DIR
     collection_name = collection_name or settings.CHROMA_COLLECTION_NAME
 
     def _sync_create():
-        # prefer modern kwargs; fallback to older signature
         try:
-            # Optionally add client settings to avoid telemetry blocking
             try:
                 chroma = Chroma(
                     embedding_function=embeddings,
@@ -72,10 +112,8 @@ async def _create_or_connect_chroma(
                 chroma = Chroma(embeddings)
             return chroma
         except Exception:
-            # re-raise for outer to catch
             raise
 
-    # run sync constructor in thread
     chroma = await asyncio.to_thread(_sync_create)
     return chroma
 
@@ -92,8 +130,6 @@ async def initialize_vector_store(
     """
     state = get_state()
     need_refresh = False
-
-    # Acquire lock only for short, safe operations (setting state, connecting chroma instance reference).
     async with state.lock:
         if state.initialized and not force_refresh:
             logger.info("Vector store already initialized and force_refresh=False -> skip")
@@ -101,7 +137,6 @@ async def initialize_vector_store(
 
         logger.info("Initializing embeddings model...")
         print("mulai menjalankan embeddings...")
-        # get_embeddings_model is sync in many setups; run it in a thread
         embeddings = await asyncio.to_thread(get_embeddings_model)
         state.embeddings = embeddings
         logger.info("embedding model siap")
@@ -117,7 +152,6 @@ async def initialize_vector_store(
 
         state.vector_store = chroma
 
-        # determine whether we must refresh (but DO NOT call refresh while holding lock)
         if force_refresh:
             need_refresh = True
             logger.info("Force refresh requested: will rebuild from source data after lock")
@@ -209,16 +243,17 @@ async def refresh_vector_store_data(batch_size: int = BATCH_SIZE) -> Dict[str, A
     
     logger.info(f"📥 Fetched {len(faqs)} FAQs, {len(docs)} docs")
 
-    combined = []
+    combined_full_docs = []    # Dokumen FAQ yang masih perlu di-split
+    pdf_processing_tasks = []  # List tasks untuk PDF (akan menghasilkan chunks)
 
-    # Normalize FAQs
+    # 1. Normalize FAQs (Masih menggunakan content string dan akan di-split nanti)
     for f in faqs:
         question = f.get("question", "").strip()
         answer = f.get("answer", "").strip()
         content = f"pertanyaan: {question}\njawaban: {answer}".strip()
         
         if content:
-            combined.append({
+            combined_full_docs.append({
                 "content": content,
                 "metadata": {
                     "source": "faq",
@@ -226,31 +261,55 @@ async def refresh_vector_store_data(batch_size: int = BATCH_SIZE) -> Dict[str, A
                 }
             })
 
-    for idx, d in enumerate(docs):
-        content = d.get("content", "").strip()
-        print(f"Dokumen ke-{idx} dengan ID {d.get('id')} memiliki content length: {len(content)}")
-        if content:
-            combined.append({
-                "content": content,
-                "metadata": {
-                    "source": "document",
-                    "title": d.get("title", ""),
-                    "doc_id": str(d.get("id"))
-                }
-            })
+    # 2. Siapkan Tasks Pemrosesan Dokumen PDF (Konkuren)
+    for d in docs:
+        # Asumsi source_path berisi URL publik yang dikirim dari Laravel
+        pdf_url = d.get("source_path", "").strip() 
+        doc_id = str(d.get("id", ""))
+        title = d.get("title", "")
+        
+        if pdf_url:
+            metadata = {
+                "source": "document",
+                "title": title,
+                "doc_id": doc_id,
+            }
+            # Buat task untuk mengunduh, mengekstrak, dan memecah PDF
+            task = _download_pdf_and_get_chunks(pdf_url, metadata)
+            pdf_processing_tasks.append(task)
+        else:
+            logger.warning(f"Document ID {doc_id} skipped: No source_path found.")
 
-    print("jumlah combined:", len(combined))
+    # 3. Eksekusi semua tugas PDF secara Konkuren
+    logger.info(f"🚀 Starting concurrent PDF processing for {len(pdf_processing_tasks)} documents...")
+    
+    # asyncio.gather mengembalikan list of lists of chunks (atau Exception jika gagal)
+    list_of_chunks = await asyncio.gather(*pdf_processing_tasks, return_exceptions=True) 
 
-    if not combined:
+    # 4. Gabungkan dan filter hasil PDF
+    processed_chunks = []
+    for result in list_of_chunks:
+        if isinstance(result, Exception):
+            # Log error agar tidak menghentikan proses refresh total
+            logger.error(f"❌ Failed to process one PDF document: {result}")
+        else:
+            # Hasilnya adalah list of chunks (list of dicts) dari satu dokumen
+            processed_chunks.extend(result)
+
+    # 5. Split Dokumen FAQ yang tersisa
+    faq_chunks = split_documents_to_chunks(combined_full_docs)
+    
+    # 6. Gabungkan semua chunks (FAQ + PDF)
+    final_chunks = faq_chunks + processed_chunks
+    
+    # Lanjutkan dengan final_chunks
+    if not final_chunks:
         logger.warning("⚠️ No data")
         return {"status": "no_data"}
 
-    # Split chunks
-    chunks = split_documents_to_chunks(combined)
-    logger.info(f"✂️ Split into {len(chunks)} chunks")
-
     # Clear collection - JANGAN delete_collection, pakai delete dengan where={}
     chroma = state.vector_store
+    # ... (Logika clearing collection tetap sama, menggunakan final_chunks. Tidak ditampilkan di sini)
     try:
         # Get all IDs and delete them (safer than delete_collection)
         logger.info("🗑️ Clearing collection...")
@@ -273,14 +332,14 @@ async def refresh_vector_store_data(batch_size: int = BATCH_SIZE) -> Dict[str, A
         logger.warning(f"⚠️ Clear failed: {e}")
 
     # Upsert chunks
-    logger.info(f"📤 Upserting {len(chunks)} chunks...")
-    await add_documents(chunks)
+    logger.info(f"📤 Upserting {len(final_chunks)} chunks...")
+    await add_documents(final_chunks)
 
     # Recreate retriever
     state.retriever = chroma.as_retriever()
     
-    logger.info(f"✅ Indexed {len(chunks)} chunks")
-    return {"status": "ok", "items_indexed": len(chunks)}
+    logger.info(f"✅ Indexed {len(final_chunks)} chunks")
+    return {"status": "ok", "items_indexed": len(final_chunks)}
 
 
 
@@ -357,3 +416,70 @@ async def add_documents(documents: list):
     except Exception as e:
         logger.error("Failed to add documents to vector store: %s", e)
         raise
+
+async def add_document_to_vector_store(pdf_url: str, metadata: Optional[Dict] = None) -> Dict[str, Any]:
+    """
+    Mengunduh PDF dari URL, mengekstrak, memecah, dan meng-upsert chunks.
+    """
+    state = get_state()
+    if not state.initialized:
+        raise RuntimeError("Vector store not initialized")
+
+    metadata = metadata or {}
+    if "doc_id" not in metadata:
+        logger.warning("add_document_to_vector_store called without doc_id in metadata")
+
+    # Ambil chunks dari proses download dan ekstraksi
+    chunks = await _download_pdf_and_get_chunks(pdf_url, metadata)
+    
+    if not chunks:
+        logger.warning(f"No text extracted from PDF: {pdf_url}")
+        return {"status": "no_content", "indexed_chunks": 0}
+
+    # Upsert chunks yang sudah diekstrak
+    await maybe_async_call(crud_add_documents, chunks)
+    
+    return {"status": "ok", "indexed_chunks": len(chunks)}
+
+
+# ... (Pastikan _download_pdf_and_get_chunks tersedia)
+
+async def update_document_in_vector_store(doc_id: str, pdf_url: str, metadata: Optional[Dict] = None) -> Dict[str, Any]:
+    """
+    Update: Hapus chunks lama berdasarkan doc_id, lalu unduh, ekstrak PDF baru, dan upsert.
+    """
+    state = get_state()
+    if not state.initialized:
+        raise RuntimeError("Vector store not initialized")
+
+    metadata = metadata or {}
+    
+    # 1. UNDUH, EKSTRAK, DAN SPLIT PDF BARU
+    logger.info(f"Processing new PDF content for doc_id: {doc_id}")
+    try:
+        # Gunakan fungsi yang modular
+        new_documents_chunks = await _download_pdf_and_get_chunks(pdf_url, metadata)
+    except Exception as e:
+        # Angkat error, jangan lanjutkan jika pemrosesan PDF baru gagal
+        raise RuntimeError(f"Gagal memproses PDF baru untuk update: {e}")
+
+    if not new_documents_chunks:
+        # Jika PDF kosong atau gagal diekstrak, hapus dokumen lama dan kembalikan status.
+        await maybe_async_call(delete_documents_by_doc_id, doc_id)
+        return {"status": "cleared", "message": "New PDF content was empty, old document deleted.", "doc_id": doc_id}
+
+    # 2. DELETE OLD, UPSERT NEW (Menggunakan CRUD yang modular)
+    # update_documents_by_doc_id menangani DELETE kemudian ADD
+    return await maybe_async_call(update_documents_by_doc_id, doc_id, new_documents_chunks)
+
+
+async def delete_document_from_vector_store(doc_id: str) -> Dict[str, Any]:
+    """
+    Delete all documents associated with doc_id.
+    """
+    state = get_state()
+    if not state.initialized:
+        raise RuntimeError("Vector store not initialized")
+
+    return await maybe_async_call(delete_documents_by_doc_id, doc_id)
+
