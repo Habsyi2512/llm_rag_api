@@ -15,11 +15,11 @@ class Settings(BaseSettings):
 
     # Ollama
     OLLAMA_BASE_URL: str = os.getenv("OLLAMA_BASE_URL", "http://localhost:11434")
-    OLLAMA_LLM_MODEL_NAME: str = os.getenv("OLLAMA_LLM_MODEL_NAME", "nomic-llama-2-7b")
-    OLLAMA_EMBEDDING_MODEL_NAME: str = os.getenv("OLLAMA_EMBEDDING_MODEL_NAME", "")
+    OLLAMA_LLM_MODEL_NAME: str = os.getenv("OLLAMA_LLM_MODEL_NAME", "")
+    OLLAMA_EMBEDDING_MODEL_NAME: str = os.getenv("OLLAMA_EMBEDDING_MODEL_NAME", "bge-m3:latest")
 
     # Laravel API
-    LARAVEL_API_BASE_URL: str = os.getenv("LARAVEL_API_BASE_URL", "http://localhost:8000")
+    LARAVEL_API_BASE_URL: str = os.getenv("LARAVEL_API_BASE_URL", "http://127.0.0.1:8002/api")
     LARAVEL_PUBLIC_URL: str = os.getenv("LARAVEL_PUBLIC_URL", "")
     LARAVEL_API_TIMEOUT: int = int(os.getenv("LARAVEL_API_TIMEOUT", "30"))
     LARAVEL_API_TOKEN: str = os.getenv("LARAVEL_API_TOKEN", "token")

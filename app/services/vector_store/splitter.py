@@ -6,8 +6,8 @@ from langchain_text_splitters import RecursiveCharacterTextSplitter
 import re
 
 DEFAULT_SPLITTER = {
-    "chunk_size": 1500,
-    "chunk_overlap": 150
+    "chunk_size": 512,
+    "chunk_overlap": 50
 }
 
 def pre_split_by_marker(text: str) -> List[str]:
@@ -22,6 +22,17 @@ def pre_split_by_marker(text: str) -> List[str]:
     # Bersihkan bagian kosong & whitespace
     parts = [p.strip() for p in parts if p.strip()]
     return parts
+
+
+def clean_text(text: str) -> str:
+    """
+    Membersihkan teks dari whitespace berlebih dan newline yang tidak perlu.
+    Menggabungkan baris yang terputus menjadi satu paragraf yang mengalir.
+    """
+    if not text:
+        return ""
+    # Mengganti semua whitespace (newline, tab, spasi ganda) dengan satu spasi
+    return re.sub(r'\s+', ' ', text).strip()
 
 
 def split_documents_to_chunks(
@@ -58,7 +69,12 @@ def split_documents_to_chunks(
             sections = [content]
 
         for section in sections:
-            chunks = text_splitter.split_text(section)
+            # Bersihkan teks sebelum di-split menjadi chunks
+            cleaned_section = clean_text(section)
+            if not cleaned_section:
+                continue
+                
+            chunks = text_splitter.split_text(cleaned_section)
             for chunk in chunks:
                 meta = dict(base_meta)
                 result.append(Document(page_content=chunk, metadata=meta))

@@ -1,43 +1,13 @@
 from fastapi import APIRouter, HTTPException, Security
 from fastapi.responses import JSONResponse
 from app.auth import verify_api_key
-from app.schemas.requests import ChatRequest, ChatResponse
+from app.schemas.requests import ChatRequest
 from app.models.state import State
 from app.core.startup import get_graph
 import logging
-import asyncio
 
 router = APIRouter(prefix="/chat", tags=["Chatbot"])
 logger = logging.getLogger(__name__)
-
-# @router.post("/", response_model=ChatResponse)
-# async def chatbot_endpoint(request: ChatRequest, api_key: str = Security(verify_api_key)):
-#     graph = get_graph()
-#     if not graph:
-#         raise HTTPException(status_code=503, detail="Service not ready")
-
-#     state: State = {
-#         "question": request.message,
-#         "context": [],
-#         "answer": "",
-#         "conversation_history": [],
-#         "user_id": request.user_id or "anonymous",
-#         "intent": "unknown",
-#         "tracking_number": None,
-#         "tracking_data": None
-#     }
-
-#     try:
-#         # final_state = await graph.ainvoke(state)
-#         final_state = await asyncio.wait_for(graph.ainvoke(state), timeout=90)
-#         return ChatResponse(
-#             response=final_state.get("answer", "Maaf, belum bisa menjawab."),
-#             intent=final_state.get("intent", "general"),
-#             tracking_data=final_state.get("tracking_data")
-#         )
-#     except Exception as e:
-#         logger.error(f"Chat error: {e}")
-#         raise HTTPException(status_code=500, detail="Internal processing error")
 
 @router.post("/")
 async def chatbot_endpoint(request: ChatRequest, api_key: str = Security(verify_api_key)):

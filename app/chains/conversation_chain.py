@@ -56,7 +56,7 @@ def generate_general_answer(state: State): # Tidak perlu menerima retriever
 async def classify_intent(state: State):
     print(f"Classifying intent for question: {state['question']}")
     chain = intent_classification_prompt | model
-    response = await chain.ainvoke({"question": state["question"]}) # Gunakan .ainvoke() untuk async
+    response = await chain.ainvoke({"question": state["question"]}) 
     intent = response.content.strip().lower()
     if intent not in ['tracking', 'general']:
         intent = 'general' # Fallback

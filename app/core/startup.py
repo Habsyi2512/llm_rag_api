@@ -42,3 +42,31 @@ async def lifespan(app: FastAPI):
 
     logger.info("Shutting down LLM RAG Service...")
     print("Shutting down LLM RAG Service...")
+
+async def init_graph():
+    """
+    Inisialisasi manual graph LLM tanpa menjalankan FastAPI server.
+    Berguna untuk testing BERTScore atau evaluasi offline.
+    """
+    global _graph
+    if _graph is not None:
+        return _graph  # sudah siap
+
+    logger.info("Manual init_graph() called...")
+    print("🚀 Inisialisasi manual graph LLM...")
+
+    try:
+        await initialize_vector_store(
+            force_refresh=False,
+            persist_directory=settings.CHROMA_PERSIST_DIR,
+            collection_name=settings.CHROMA_COLLECTION_NAME,
+        )
+        retriever = get_retriever()
+        _graph = create_conversation_graph(retriever)
+        logger.info("LangGraph compiled and ready (manual init).")
+        print("✅ Graph siap digunakan!")
+    except Exception as e:
+        logger.error(f"Manual init_graph() gagal: {e}")
+        raise
+
+    return _graph

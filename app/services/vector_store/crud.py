@@ -6,7 +6,7 @@ from app.services.vector_store.base import get_state, retry_async
 
 logger = logging.getLogger(__name__)
 
-async def _upsert_documents_in_store(docs: Iterable, batch_size: int = 64) -> None:
+async def _upsert_documents_in_store(docs: Iterable, batch_size: int = 10) -> None:
     """
     Upsert documents into vector store in batches.
     Each document is expected to be a langchain Document with metadata.
@@ -92,10 +92,6 @@ async def update_documents_by_faq_id(faq_id: str, new_documents):
     await delete_documents_by_faq_id(faq_id)
     await add_documents(new_documents)
     return {"status": "updated", "faq_id": faq_id}
-
-# kode baru untuk delete dan update berdasarkan doc_id 1 November 2025
-
-# app/services/vector_store/crud.py (Asumsi implementasi Anda)
 
 async def delete_documents_by_doc_id(doc_id: str):
     """

@@ -1,0 +1,50 @@
+﻿Pertanyaan,Jawaban Chatbot,Referensi,Precision,Recall,F1 Score
+Apa Visi Disdukcapil Kepulauan Anambas?,Halo! Visi Disdukcapil Kepulauan Anambas adalah Terciptanya masyarakat sadar akan tertib administrasi kependudukan.,Terciptanya masyarakat sadar akan tertib administrasi kependudukan.,0.9886994361877441,0.9976572394371033,0.9931581020355225
+Dimana alamat Disdukcapil Kepulauan Anambas?,"Halo! Kantor Disdukcapil Kepulauan Anambas beralamat di Jl. Imam Bonjol No. 50, Tarempa, Kecamatan Siantan.","jl. imam bonjol no. 50, tarempa, kecamatan siantan.",0.9806151986122131,0.9881958365440369,0.984390914440155
+"Apakah ada biaya yang harus dibayarkan untuk mengurus dokumen kependudukan, khususnya KTP?","Halo! Untuk pengurusan dokumen kependudukan, khususnya KTP, di Disdukcapil Kabupaten Kepulauan Anambas **TIDAK DIPUNGUT BIAYA**.",layanan pembuatan ktp elektronik tidak dipungut biaya,0.9741323590278625,0.9796812534332275,0.9768989682197571
+Apa Tugas Pokok Disdukcapil Kepulauan Anambas?,"Halo! Tugas pokok Disdukcapil Kepulauan Anambas adalah melaksanakan urusan pemerintahan yang menjadi kewenangan daerah di bidang administrasi kependudukan dan pencatatan sipil, serta tugas pembantuan yang diberikan kepada daerah.",Melaksanakan urusan pemerintahan yang menjadi kewenangan daerah di bidang administrasi kependudukan dan pencatatan sipil dan tugas pembantuan yang diberikan kepada daerah,0.9905651211738586,0.9958255290985107,0.9931883811950684
+Apa persyaratan pembuatan kartu keluarga yang rusak?,"Halo! Untuk pembuatan Kartu Keluarga yang rusak, persyaratannya adalah sebagai berikut:
+*   Mengisi Formulir
+*   Fotocopy KTP-el
+*   KK yang rusak",Mengisi Formulir; Surat Keterangan Hilang Dari Kepolisian; Fotocopy KTP-el; KK Yang Rusak,0.9861939549446106,0.9878155589103699,0.9870041012763977
+Apa Syarat yang Diperlukan untuk Pembuatan KTP?,"Halo! Untuk pembuatan KTP Elektronik, berikut adalah persyaratan yang diperlukan:
+
+1.  Fotokopi Kartu Keluarga (KK)
+2.  KTP-el asli (bagi KTP-el yang rusak)
+3.  Surat keterangan kehilangan dari kepolisian (bagi KTP-el yang hilang)",Persyaratan dalam pembuatan KTP Elektronik yaitu: Fotokopi Kartu Keluarga (KK); KTP-el asli (Bagi KTP-el yang rusak); Surat keterangan kehilangan dari kepolisian (Bagi KTP-el yang hilang),0.9944555759429932,0.9944964647293091,0.9944760203361511
+"Jika Saya ingin membuat SKPWNI, bagaimana mekanisme atau prosedurnya?","Halo! Tentu, saya akan bantu jelaskan mekanisme atau prosedur pembuatan SKPWNI.
+
+Berikut adalah langkah-langkahnya:
+1.  Anda menuju ke front office untuk mengisi buku tamu, mengambil nomor antrian, dan menyerahkan berkas persyaratan.
+2.  Kemudian, Anda akan menunggu panggilan sesuai urutan nomor antrian.
+3.  Setelah itu, petugas akan memberikan resi pengambilan.
+4.  Terakhir, Anda bisa kembali ke front office untuk pengambilan hasil SKPWNI Anda.","Menuju ke front office untuk mengisi buku tamu, mengambil nomor antrian, menyerahkan berkas persyaratan; Menunggu panggilan; Petugas memberikan resi pengambilan; Menuju ke front office untuk pengambilan hasil SKPWNI",0.9880939722061157,0.9926949143409729,0.9903890490531921
+Apa Motto Pelayanan Disdukcapil Kepulauan Anambas?,"Halo! Motto pelayanan Disdukcapil Kepulauan Anambas adalah **""BERMADAH""**.
+
+Ini adalah singkatan dari:
+*   **B**: BERSIH (Bersih dari pungutan liar)
+*   **E**: EFISIEN (Pelayanan cepat dan tepat)
+*   **R**: RESPONSIF (Cepat tanggap dalam pelayanan)
+*   **M**: MUDAH (Jenis pelayanan jelas dan gratis)
+*   **A**: AKUNTABEL (Pelayanan dapat dipertanggungjawabkan sesuai peraturan)
+*   **D**: DEDIKASI (Pengorbanan tanpa batas dalam pelayanan)
+*   **A**: AMANAH (Menjaga kerahasiaan data penduduk)
+*   **H**: HORMAT (Hormati pemohon dengan sepenuh hati)","Disdukcapil Kepulauan Anambas memiliki motto BERMADAH: Bersih, Efisien, Responsif, Mudah, Akuntabel, Dedikasi, Amanah, Hormat",0.9804608225822449,0.9889360666275024,0.9846802353858948
+Apa Persyaratan Pembuatan Akta Kelahiran?,"Halo! Tentu, saya akan bantu informasikan persyaratan pembuatan Akta Kelahiran.
+
+Untuk penerbitan Akta Kelahiran, persyaratannya tergantung tempat kelahiran anak:
+
+**Untuk anak yang lahir di dalam Indonesia:**
+1.  Fotokopi surat keterangan kelahiran dari rumah sakit, puskesmas, atau bidan.
+2.  Fotokopi Kartu Keluarga (KK) orang tua.
+3.  Fotokopi Kartu Tanda Penduduk elektronik (KTP-el) orang tua.
+4.  Fotokopi buku nikah atau akta perkawinan orang tua.
+
+**Untuk anak yang lahir di luar Indonesia:**
+1.  Fotokopi surat keterangan kelahiran dari rumah sakit atau instansi berwenang di negara setempat.
+2.  Fotokopi paspor orang tua.
+3.  Fotokopi Kartu Keluarga (KK) orang tua.
+4.  Fotokopi buku nikah atau akta perkawinan orang tua.
+
+Semoga informasinya membantu!",Persyaratan Akta Kelahiran: Surat keterangan lahir dari fasilitas kesehatan; Fotokopi KK orang tua; Fotokopi KTP orang tua; Fotokopi buku nikah atau akta perkawinan,0.9842437505722046,0.9909480810165405,0.9875845313072205
+Siapa Bupati Kabupaten Kepulauan Anambas tahun 2024?,"Mohon maaf, saya tidak memiliki informasi mengenai siapa Bupati Kabupaten Kepulauan Anambas tahun 2024 dalam konteks yang diberikan.","Maaf, saya tidak menemukan informasi tersebut dalam data yang saya miliki.",0.9862918257713318,0.9941830039024353,0.9902216792106628

@@ -1,7 +1,7 @@
 # app/services/vector_store/service.py
 import logging, asyncio, inspect, tempfile, httpx, os
 from typing import Optional, Dict, Any, Callable, List
-from langchain_community.document_loaders import PyPDFLoader
+from langchain_community.document_loaders import PyMuPDFLoader
 from app.services.vector_store.base import get_state
 from app.services.vector_store.fetcher import fetch_all_faqs, fetch_all_documents
 from app.services.vector_store.splitter import split_documents_to_chunks
@@ -46,11 +46,10 @@ async def _download_pdf_and_get_chunks(pdf_url: str, metadata: Dict) -> List:
         # 1. Download PDF ke file temporer
         temp_path = await download_file_to_temp(pdf_url, suffix=".pdf")
         
-        # 2. Load Dokumen menggunakan PyPDFLoader (membutuhkan eksekusi di thread)
+        # 2. Load Dokumen menggunakan PyMuPDFLoader (lebih baik menangani spasi/font)
         def sync_load_pdf():
-            loader = PyPDFLoader(temp_path)
-            # load() dari PyPDFLoader biasanya blocking/sync
-            return loader.load() 
+            loader = PyMuPDFLoader(temp_path)
+            return loader.load()  
 
         documents = await asyncio.to_thread(sync_load_pdf)
 
@@ -328,7 +327,7 @@ async def refresh_vector_store_data(batch_size: int = BATCH_SIZE) -> Dict[str, A
 
     # Upsert chunks
     logger.info(f"📤 Upserting {len(final_chunks)} chunks...")
-    await add_documents(final_chunks)
+    await crud_add_documents(final_chunks)
 
     # Recreate retriever
     state.retriever = chroma.as_retriever()
@@ -385,32 +384,7 @@ async def delete_faq_from_vector_store(faq_id: str) -> Dict[str, Any]:
 
     return await maybe_async_call(delete_documents_by_faq_id, faq_id)
 
-async def add_documents(documents: list):
-    """
-    Upsert list of documents (each {'content': str, 'metadata': dict}) into Chroma vector store.
-    """
-    state = get_state()
-    chroma = state.vector_store
-    if not chroma:
-        raise RuntimeError("Vector store not initialized")
-    
-    if not documents:
-        logger.info("No documents to add")
-        return
 
-    # Langchain Chroma expects Document objects or dicts with content + metadata
-    try:
-        # Upsert all documents at once
-        if hasattr(chroma, "add_documents"):  # LangChain Chroma method
-            chroma.add_documents(documents)
-        elif hasattr(chroma, "upsert"):       # ChromaDB API
-            chroma.upsert(documents)
-        else:
-            raise RuntimeError("Chroma client does not support add_documents or upsert")
-        logger.info("Added %d documents to vector store", len(documents))
-    except Exception as e:
-        logger.error("Failed to add documents to vector store: %s", e)
-        raise
 
 async def add_document_to_vector_store(pdf_url: str, metadata: Optional[Dict] = None) -> Dict[str, Any]:
     """
