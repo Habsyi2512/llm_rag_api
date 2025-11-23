@@ -57,6 +57,9 @@ async def _download_pdf_and_get_chunks(pdf_url: str, metadata: Dict) -> List:
         for doc in documents:
             full_text += doc.page_content + "\n"
 
+        logger.info(f"Extracted {len(full_text)} chars from PDF {pdf_url}. Preview: {full_text[:200]}")
+
+
         combined = [{
             "content" : full_text,
             "metadata": dict(metadata)
@@ -383,8 +386,6 @@ async def delete_faq_from_vector_store(faq_id: str) -> Dict[str, Any]:
         raise RuntimeError("Vector store not initialized")
 
     return await maybe_async_call(delete_documents_by_faq_id, faq_id)
-
-
 
 async def add_document_to_vector_store(pdf_url: str, metadata: Optional[Dict] = None) -> Dict[str, Any]:
     """

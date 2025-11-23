@@ -4,10 +4,13 @@ from typing import List, Dict, Iterable
 from langchain_core.documents import Document
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 import re
+import logging
+
+logger = logging.getLogger(__name__)
 
 DEFAULT_SPLITTER = {
-    "chunk_size": 512,
-    "chunk_overlap": 50
+    "chunk_size": 1800,
+    "chunk_overlap": 400
 }
 
 def pre_split_by_marker(text: str) -> List[str]:
@@ -61,9 +64,10 @@ def split_documents_to_chunks(
         base_meta = dict(doc.get("metadata", {}))
         data_source = base_meta.get("source", "")
 
-        if "###" in content:
-            print("Detected manual delimiter ### in document from source:", data_source)
-            print("doc content preview:", content[:100])
+        # Gunakan regex untuk deteksi yang lebih robust (menangani variasi newline dsb)
+        if re.search(r'#{3,}', content):
+            logger.info(f"Detected manual delimiter ### in document from source: {data_source}")
+            # print("doc content preview:", content[:100])
             sections = pre_split_by_marker(content)
         else:
             sections = [content]
