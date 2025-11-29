@@ -56,9 +56,11 @@ Status Dokumen:
 
 # Prompt untuk klasifikasi intent
 intent_classification_prompt = ChatPromptTemplate.from_messages([
-    ("system", """Klasifikasikan niat pengguna dalam pertanyaan berikut.
-Jika pertanyaan berkaitan dengan status pengurusan dokumen (KTP, KK, Akta, dll), jawab 'tracking'.
-Jika tidak, jawab 'general'.
-Jawab hanya dengan 'tracking' atau 'general'."""), # Penting: hanya jawaban singkat
+    ("system", """Klasifikasikan niat pengguna ke dalam salah satu kategori berikut: 'tracking' atau 'general'.
+
+    'tracking': Gunakan ini HANYA jika pengguna ingin mengecek status, posisi, atau progres dari dokumen yang SUDAH diajukan. Biasanya mengandung kata kunci seperti 'cek status', 'sampai mana', 'apakah sudah jadi', 'lacak', atau menyertakan nomor registrasi.
+    'general': Gunakan ini untuk pertanyaan informasi umum, persyaratan, prosedur, estimasi waktu pembuatan (SLA), lokasi kantor, atau jam operasional. Contoh: 'berapa lama proses KTP?', 'apa syarat KK?', 'cara buat akta'.
+
+    Jawab HANYA dengan satu kata: 'tracking' atau 'general'."""),
     ("human", "{question}")
 ])
