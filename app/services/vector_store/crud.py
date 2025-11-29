@@ -52,50 +52,9 @@ async def _chroma_upsert(chroma, docs: List):
 async def add_documents(documents):
     return await retry_async(_upsert_documents_in_store, documents, tries=3)
 
-async def delete_documents_by_faq_id(faq_id: str):
+async def delete_documents_by_metadata(metadata_key: str, metadata_value: str):
     """
-    Delete all vectors that have metadata.faq_id == faq_id
-    """
-    state = get_state()
-    chroma = state.vector_store
-    if chroma is None:
-        raise RuntimeError("Vector store is not initialized")
-
-    try:
-        delete_fn = getattr(chroma, "delete", None)
-        if delete_fn:
-            maybe_coro = delete_fn(ids=None, where={"faq_id": faq_id})
-            if hasattr(maybe_coro, "__await__"):
-                await maybe_coro
-            return {"status": "deleted", "faq_id": faq_id}
-        else:
-            coll = chroma
-            def sync_query_delete():
-                matches = coll.query(filter={"faq_id": faq_id})
-                ids = [m["id"] for m in matches] if matches else []
-                if ids:
-                    coll.delete(ids=ids)
-                return len(ids)
-            import asyncio
-            loop = asyncio.get_running_loop()
-            deleted_count = await loop.run_in_executor(None, sync_query_delete)
-            return {"status": "deleted", "faq_id": faq_id, "deleted_count": deleted_count}
-    except Exception as e:
-        logger.error("Error deleting documents from vector store: %s", e)
-        raise
-
-async def update_documents_by_faq_id(faq_id: str, new_documents):
-    """
-    Strategy: delete old docs for faq_id then upsert new chunks
-    (atomicity depends on Chroma; we do delete then upsert)
-    """
-    await delete_documents_by_faq_id(faq_id)
-    await add_documents(new_documents)
-    return {"status": "updated", "faq_id": faq_id}
-
-async def delete_documents_by_doc_id(doc_id: str):
-    """
-    Delete all vectors that have metadata.faq_id == faq_id
+    Delete all vectors that have metadata[metadata_key] == metadata_value
     """
     state = get_state()
     chroma = state.vector_store
@@ -105,14 +64,14 @@ async def delete_documents_by_doc_id(doc_id: str):
     try:
         delete_fn = getattr(chroma, "delete", None)
         if delete_fn:
-            maybe_coro = delete_fn(ids=None, where={"doc_id": doc_id})
+            maybe_coro = delete_fn(ids=None, where={metadata_key: metadata_value})
             if hasattr(maybe_coro, "__await__"):
                 await maybe_coro
-            return {"status": "deleted", "doc_id": doc_id}
+            return {"status": "deleted", metadata_key: metadata_value}
         else:
             coll = chroma
             def sync_query_delete():
-                matches = coll.query(filter={"doc_id": doc_id})
+                matches = coll.query(filter={metadata_key: metadata_value})
                 ids = [m["id"] for m in matches] if matches else []
                 if ids:
                     coll.delete(ids=ids)
@@ -120,19 +79,19 @@ async def delete_documents_by_doc_id(doc_id: str):
             import asyncio
             loop = asyncio.get_running_loop()
             deleted_count = await loop.run_in_executor(None, sync_query_delete)
-            return {"status": "deleted", "doc_id": doc_id, "deleted_count": deleted_count}
+            return {"status": "deleted", metadata_key: metadata_value, "deleted_count": deleted_count}
     except Exception as e:
-        logger.error("Error deleting documents from vector store: %s", e)
+        logger.error(f"Error deleting documents by {metadata_key}={metadata_value}: {e}")
         raise
 
-async def update_documents_by_doc_id(doc_id: str, new_documents):
+async def update_documents_by_metadata(metadata_key: str, metadata_value: str, new_documents):
     """
-    Strategy: delete old docs for doc_id then upsert new chunks
+    Strategy: delete old docs for metadata_key=metadata_value then upsert new chunks
     """
     # Langkah 1: Hapus dokumen lama
-    await delete_documents_by_doc_id(doc_id) 
+    await delete_documents_by_metadata(metadata_key, metadata_value)
     
     # Langkah 2: Tambahkan dokumen baru
-    await add_documents(new_documents) 
+    await add_documents(new_documents)
     
-    return {"status": "updated", "faq_id": doc_id}
+    return {"status": "updated", metadata_key: metadata_value}

@@ -7,10 +7,8 @@ from app.services.vector_store.fetcher import fetch_all_faqs, fetch_all_document
 from app.services.vector_store.splitter import split_documents_to_chunks
 from app.services.vector_store.crud import (
     add_documents as crud_add_documents,
-    delete_documents_by_faq_id,
-    update_documents_by_faq_id,
-    delete_documents_by_doc_id,
-    update_documents_by_doc_id
+    delete_documents_by_metadata,
+    update_documents_by_metadata
 )
 from app.services.api_client import download_file_to_temp
 from app.services.embedding_service import get_embeddings_model
@@ -374,7 +372,7 @@ async def update_faq_in_vector_store(faq_id: str, content: str, metadata: Option
     metadata = metadata or {}
     metadata["faq_id"] = faq_id
     docs = split_documents_to_chunks([{"content": content, "metadata": metadata}])
-    return await maybe_async_call(update_documents_by_faq_id, faq_id, docs)
+    return await maybe_async_call(update_documents_by_metadata, "faq_id", faq_id, docs)
 
 
 async def delete_faq_from_vector_store(faq_id: str) -> Dict[str, Any]:
@@ -385,7 +383,7 @@ async def delete_faq_from_vector_store(faq_id: str) -> Dict[str, Any]:
     if not state.initialized:
         raise RuntimeError("Vector store not initialized")
 
-    return await maybe_async_call(delete_documents_by_faq_id, faq_id)
+    return await maybe_async_call(delete_documents_by_metadata, "faq_id", faq_id)
 
 async def add_document_to_vector_store(pdf_url: str, metadata: Optional[Dict] = None) -> Dict[str, Any]:
     """
@@ -435,12 +433,12 @@ async def update_document_in_vector_store(doc_id: str, pdf_url: str, metadata: O
 
     if not new_documents_chunks:
         # Jika PDF kosong atau gagal diekstrak, hapus dokumen lama dan kembalikan status.
-        await maybe_async_call(delete_documents_by_doc_id, doc_id)
+        await maybe_async_call(delete_documents_by_metadata, "doc_id", doc_id)
         return {"status": "cleared", "message": "New PDF content was empty, old document deleted.", "doc_id": doc_id}
 
     # 2. DELETE OLD, UPSERT NEW (Menggunakan CRUD yang modular)
     # update_documents_by_doc_id menangani DELETE kemudian ADD
-    return await maybe_async_call(update_documents_by_doc_id, doc_id, new_documents_chunks)
+    return await maybe_async_call(update_documents_by_metadata, "doc_id", doc_id, new_documents_chunks)
 
 
 async def delete_document_from_vector_store(doc_id: str) -> Dict[str, Any]:
@@ -451,5 +449,5 @@ async def delete_document_from_vector_store(doc_id: str) -> Dict[str, Any]:
     if not state.initialized:
         raise RuntimeError("Vector store not initialized")
 
-    return await maybe_async_call(delete_documents_by_doc_id, doc_id)
+    return await maybe_async_call(delete_documents_by_metadata, "doc_id", doc_id)
 
