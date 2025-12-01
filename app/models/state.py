@@ -15,3 +15,4 @@ class State(TypedDict):
     intent: str                     # 'general', 'tracking'
     tracking_number: Optional[str]  # Nomor registrasi jika intent tracking
     tracking_data: Optional[dict]   # Data status dari API Laravel
+    category: Optional[str]         # Kategori pertanyaan (KTP, KK, dll)

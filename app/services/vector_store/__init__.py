@@ -1,6 +1,6 @@
 # app/services/vector_store/__init__.py
 
-from .service import (
+from .vector_store_service import (
     initialize_vector_store,
     get_retriever,
     refresh_vector_store_data,

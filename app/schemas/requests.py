@@ -5,6 +5,7 @@ from datetime import datetime
 class ChatRequest(BaseModel):
     message: str
     user_id: Optional[str] = None # ID unik pengguna atau sesi
+    history: Optional[list] = [] # Riwayat percakapan sebelumnya [{"role": "user", "content": "..."}, ...]
 
 class ChatResponse(BaseModel):
     response: str

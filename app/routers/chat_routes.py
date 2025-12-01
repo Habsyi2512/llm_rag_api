@@ -1,6 +1,6 @@
 from fastapi import APIRouter, HTTPException, Security
 from fastapi.responses import JSONResponse
-from app.auth import verify_api_key
+from app.core.auth import verify_api_key
 from app.schemas.requests import ChatRequest
 from app.models.state import State
 from app.core.startup import get_graph
@@ -19,7 +19,7 @@ async def chatbot_endpoint(request: ChatRequest, api_key: str = Security(verify_
         "question": request.message,
         "context": [],
         "answer": "",
-        "conversation_history": [],
+        "conversation_history": request.history or [],
         "user_id": request.user_id or "anonymous",
         "intent": "unknown",
         "tracking_number": None,
@@ -40,6 +40,7 @@ async def chatbot_endpoint(request: ChatRequest, api_key: str = Security(verify_
         return JSONResponse(content={
             "response": final_state.get("answer", "Maaf, belum bisa menjawab."),
             "intent": final_state.get("intent", "general"),
+            "category": final_state.get("category", "Umum"),
             "tracking_data": tracking_data
         })
     except Exception as e:

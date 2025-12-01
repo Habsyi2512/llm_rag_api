@@ -14,6 +14,10 @@ from app.services.api_client import download_file_to_temp
 from app.services.embedding_service import get_embeddings_model
 from app.core.config import settings
 
+from langchain_community.retrievers import BM25Retriever
+from langchain.retrievers import EnsembleRetriever
+from langchain_core.documents import Document
+
 try:
     from langchain_chroma import Chroma
 except Exception:
@@ -35,6 +39,56 @@ async def maybe_async_call(fn: Callable, *args, **kwargs):
     if inspect.isawaitable(result):
         return await result
     return await asyncio.to_thread(lambda: result)
+
+async def _create_hybrid_retriever(chroma_client):
+    """
+    Membuat EnsembleRetriever (Hybrid Search) menggabungkan BM25 (Keyword) dan Chroma (Vector).
+    """
+    logger.info("Membangun Hybrid Retriever (BM25 + Vector)...")
+    
+    # 1. Ambil semua dokumen dari Chroma untuk membangun index BM25
+    # Chroma.get() mengembalikan dict dengan keys: ids, embeddings, documents, metadatas
+    try:
+        # Jalankan di thread terpisah karena bisa berat jika data banyak
+        collection_data = await asyncio.to_thread(chroma_client.get)
+        
+        documents = []
+        if collection_data and "documents" in collection_data and collection_data["documents"]:
+            texts = collection_data["documents"]
+            metadatas = collection_data["metadatas"]
+            
+            for i, text in enumerate(texts):
+                if text: # Pastikan text tidak None/Empty
+                    meta = metadatas[i] if metadatas and i < len(metadatas) else {}
+                    documents.append(Document(page_content=text, metadata=meta))
+        
+        logger.info(f"Total dokumen untuk BM25: {len(documents)}")
+
+        # 2. Siapkan Vector Retriever
+        chroma_retriever = chroma_client.as_retriever(search_kwargs={"k": 4})
+
+        if not documents:
+            logger.warning("Tidak ada dokumen untuk BM25, fallback ke Vector Retriever saja.")
+            return chroma_retriever
+
+        # 3. Siapkan BM25 Retriever
+        bm25_retriever = BM25Retriever.from_documents(documents)
+        bm25_retriever.k = 4  # Samakan k dengan vector retriever
+
+        # 4. Gabungkan dengan EnsembleRetriever
+        # Bobot: 0.4 BM25 (Keyword), 0.6 Vector (Semantic)
+        ensemble_retriever = EnsembleRetriever(
+            retrievers=[bm25_retriever, chroma_retriever],
+            weights=[0.4, 0.6]
+        )
+        
+        logger.info("Hybrid Retriever berhasil dibuat.")
+        return ensemble_retriever
+
+    except Exception as e:
+        logger.error(f"Gagal membuat Hybrid Retriever: {e}")
+        # Fallback ke vector retriever biasa jika gagal
+        return chroma_client.as_retriever()
 
 async def _download_pdf_and_get_chunks(pdf_url: str, metadata: Dict) -> List:
     """Mengunduh PDF secara temporer, mengekstrak teks, dan memecah menjadi chunks."""
@@ -198,19 +252,10 @@ async def initialize_vector_store(
     # After refresh (or if no refresh needed), ensure retriever is set and mark initialized
     # Note: use state.vector_store which was set inside lock above
     chroma = state.vector_store
-    retriever = None
-    try:
-        make_retriever = getattr(chroma, "as_retriever", None)
-        if make_retriever:
-            # as_retriever is usually sync
-            retriever = make_retriever()
-        else:
-            retriever = chroma
-    except Exception as e:
-        logger.error("Failed to create retriever: %s", e)
-        retriever = chroma
+    
+    # --- HYBRID RETRIEVER SETUP ---
+    state.retriever = await _create_hybrid_retriever(chroma)
 
-    state.retriever = retriever
     state.initialized = True
     logger.info("Vector store initialized and retriever ready.")
 
@@ -330,8 +375,8 @@ async def refresh_vector_store_data(batch_size: int = BATCH_SIZE) -> Dict[str, A
     logger.info(f"📤 Upserting {len(final_chunks)} chunks...")
     await crud_add_documents(final_chunks)
 
-    # Recreate retriever
-    state.retriever = chroma.as_retriever()
+    # Recreate retriever (HYBRID)
+    state.retriever = await _create_hybrid_retriever(chroma)
     
     logger.info(f"✅ Indexed {len(final_chunks)} chunks")
     return {"status": "ok", "items_indexed": len(final_chunks)}

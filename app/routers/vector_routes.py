@@ -1,8 +1,8 @@
 # app/routers/vector_routes.py
 
 from fastapi import APIRouter, HTTPException, Security, Body
-from app.auth import verify_api_key
-from app.services.vector_store.service import (
+from app.core.auth import verify_api_key
+from app.services.vector_store.vector_store_service import (
     refresh_vector_store_data,
     get_retriever,
     add_faq_to_vector_store,

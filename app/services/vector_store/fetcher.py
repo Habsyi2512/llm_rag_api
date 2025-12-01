@@ -18,7 +18,7 @@ async def fetch_all_faqs() -> Dict[str, List[Dict[str, Any]]]:
     
     try:
         async with httpx.AsyncClient(timeout=timeout) as client:
-            response = await client.get(url, headers=headers)
+            response = await client.get(url, headers=headers, params={"per_page": 1000})
             response.raise_for_status()
             data = response.json()
             logger.info(f"✅ Fetched {len(data.get('data', []))} FAQs")
