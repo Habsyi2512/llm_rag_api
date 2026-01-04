@@ -1,7 +1,7 @@
 import logging
 from contextlib import asynccontextmanager
 from fastapi import FastAPI
-from app.services.vector_store.service import (
+from app.services.vector_store.vector_store_service import (
     initialize_vector_store,
     get_retriever
 )

@@ -86,7 +86,7 @@ def generate_general_answer(state: State): # Tidak perlu menerima retriever
         history_text = "Belum ada riwayat percakapan."
 
     chain = general_rag_prompt | model
-    response = chain.invoke({ # Gunakan .invoke() untuk sync
+    response = chain.invoke({ 
         "question": state["question"],
         "context": docs_content,
         "date": current_date,
@@ -197,7 +197,6 @@ async def handle_tracking_intent(state: State):
             return error_state
 
 
-# --- LangGraph Setup ---
 # --- LangGraph Setup ---
 def create_conversation_graph(retriever): # Terima retriever sebagai parameter
     graph_builder = StateGraph(State)

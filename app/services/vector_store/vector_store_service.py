@@ -76,10 +76,11 @@ async def _create_hybrid_retriever(chroma_client):
         bm25_retriever.k = 4  # Samakan k dengan vector retriever
 
         # 4. Gabungkan dengan EnsembleRetriever
-        # Bobot: 0.4 BM25 (Keyword), 0.6 Vector (Semantic)
+        # Bobot: 0.3 BM25 (Keyword), 0.7 Vector (Semantic)
+        # Kita naikkan bobot Vector agar pencarian semantik (KK == Kartu Keluarga) lebih dominan
         ensemble_retriever = EnsembleRetriever(
             retrievers=[bm25_retriever, chroma_retriever],
-            weights=[0.4, 0.6]
+            weights=[0.3, 0.7]
         )
         
         logger.info("Hybrid Retriever berhasil dibuat.")
