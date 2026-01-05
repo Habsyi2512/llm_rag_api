@@ -218,7 +218,7 @@ def create_conversation_graph(retriever): # Terima retriever sebagai parameter
         if intent in ["tracking", "tracking_pending_number"]: 
             return "tracking_handler"
         else:
-            return "contextualize" # Arahkan ke contextualize dulu, bukan langsung retriever
+            return "contextualize" # Arahkan ke contextualize, tidak langsung retriever
 
     graph_builder.add_conditional_edges(
         "classifier",
