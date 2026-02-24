@@ -4,6 +4,10 @@ import pandas as pd
 from bert_score import score, model2layers
 
 # Import fungsi-fungsi dari sistemmu
+import sys
+import os
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+
 from app.core.startup import get_graph, init_graph
 from app.models.state import State
 
@@ -18,9 +22,9 @@ model2layers["xlm-roberta-base"] = 12
 
 # === 1. Dataset Pertanyaan dan Referensi ===
 pertanyaan = [
-    "Apa Visi Disdukcapil Kepulauan Anambas?",
-    "Dimana alamat Disdukcapil Kepulauan Anambas?",
-    "Apakah ada biaya yang harus dibayarkan untuk mengurus dokumen kependudukan, khususnya KTP?",
+    "Apa yang dimaksud dengan KTP-el?",
+    "Apa fungsi dari SIAK (Sistem Informasi Administrasi Kependudukan)?",
+    "Siapa yang wajib memiliki Surat Keterangan Pindah (SKP)?",
     "Apa Tugas Pokok Disdukcapil Kepulauan Anambas?",
     "Apa persyaratan pembuatan kartu keluarga yang rusak?",
     "Apa Syarat yang Diperlukan untuk Pembuatan KTP?",
@@ -31,9 +35,9 @@ pertanyaan = [
 ]
 
 refs = [
-    "Terciptanya masyarakat sadar akan tertib administrasi kependudukan.",
-    "jl. imam bonjol no. 50, tarempa, kecamatan siantan.",
-    "layanan pembuatan ktp elektronik tidak dipungut biaya",
+    "Kartu Tanda Penduduk Elektronik (KTP-el) adalah kartu tanda penduduk yang dilengkapi dengan cip yang merupakan identitas resmi penduduk sebagai bukti diri yang diterbitkan oleh Disdukcapil Kabupaten/Kota.",
+    "Sistem Informasi Administrasi Kependudukan (SIAK) adalah sistem informasi yang memanfaatkan teknologi informasi dan komunikasi untuk memfasilitasi pengelolaan informasi Administrasi Kependudukan di tingkat penyelenggara dan Disdukcapil Kabupaten/Kota sebagai satu kesatuan.",
+    "Surat Keterangan Pindah (SKP) adalah surat keterangan yang wajib dimiliki oleh Penduduk yang bermaksud pindah ke kabupaten/kota/provinsi lain, yang diterbitkan oleh Disdukcapil Kabupaten/Kota atau unit pelaksana dinas kependudukan dan pencatatan sipil dari daerah asal.",
     "Melaksanakan urusan pemerintahan yang menjadi kewenangan daerah di bidang administrasi kependudukan dan pencatatan sipil dan tugas pembantuan yang diberikan kepada daerah",
     "Mengisi Formulir; Surat Keterangan Hilang Dari Kepolisian; Fotocopy KTP-el; KK Yang Rusak",
     "Persyaratan dalam pembuatan KTP Elektronik yaitu: Fotokopi Kartu Keluarga (KK); KTP-el asli (Bagi KTP-el yang rusak); Surat keterangan kehilangan dari kepolisian (Bagi KTP-el yang hilang)",
@@ -106,8 +110,8 @@ async def main():
     print(f"F1 Score: {F1.mean().item():.4f}")
 
     # Simpan ke CSV jika ingin dokumentasi hasil penelitian
-    df.to_csv("hasil_evaluasi_chatbot.csv", index=False, encoding="utf-8-sig")
-    print("\n✅ Hasil evaluasi disimpan ke 'hasil_evaluasi_chatbot.csv'")
+    df.to_csv("hasil_evaluasi_chatbot2.csv", index=False, encoding="utf-8-sig")
+    print("\n✅ Hasil evaluasi disimpan ke 'hasil_evaluasi_chatbot2.csv'")
 
 
 if __name__ == "__main__":

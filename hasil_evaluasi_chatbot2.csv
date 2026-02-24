@@ -1,0 +1,57 @@
+﻿Pertanyaan,Jawaban Chatbot,Referensi,Precision,Recall,F1 Score
+Apa yang dimaksud dengan KTP-el berdasarkan Permendagri No 108 Tahun 2019?,Saya tidak memiliki informasi mengenai definisi KTP-el berdasarkan Permendagri No 108 Tahun 2019 dalam konteks yang diberikan.,Kartu Tanda Penduduk Elektronik (KTP-el) adalah kartu tanda penduduk yang dilengkapi dengan cip yang merupakan identitas resmi penduduk sebagai bukti diri yang diterbitkan oleh Disdukcapil Kabupaten/Kota.,0.9834773540496826,0.9815061092376709,0.9824907779693604
+Apa fungsi dari SIAK (Sistem Informasi Administrasi Kependudukan)?,SIAK (Sistem Informasi Administrasi Kependudukan) adalah sistem informasi yang memanfaatkan teknologi informasi dan komunikasi untuk memfasilitasi pengelolaan informasi Administrasi Kependudukan di tingkat penyelenggara dan Disdukcapil Kabupaten/Kota sebagai satu kesatuan. Sistem ini mengelola data kependudukan secara nasional.,Sistem Informasi Administrasi Kependudukan (SIAK) adalah sistem informasi yang memanfaatkan teknologi informasi dan komunikasi untuk memfasilitasi pengelolaan informasi Administrasi Kependudukan di tingkat penyelenggara dan Disdukcapil Kabupaten/Kota sebagai satu kesatuan.,0.9973359107971191,0.9991836547851562,0.9982588887214661
+Siapa yang wajib memiliki Surat Keterangan Pindah (SKP)?,"Surat Keterangan Pindah (SKP) wajib dimiliki oleh Penduduk yang melakukan pindah antar daerah dalam wilayah Negara Kesatuan Republik Indonesia untuk mencatat pindah domisili mereka. Ini juga berlaku bagi Penduduk Orang Asing yang memiliki izin tinggal tetap saat mengurus KTP-el karena pindah datang, sebagaimana disebutkan dalam Pasal 18.","Surat Keterangan Pindah (SKP) adalah surat keterangan yang wajib dimiliki oleh Penduduk yang bermaksud pindah ke kabupaten/kota/provinsi lain, yang diterbitkan oleh Disdukcapil Kabupaten/Kota atau unit pelaksana dinas kependudukan dan pencatatan sipil dari daerah asal.",0.9870960712432861,0.9859509468078613,0.9865232110023499
+Apa Tugas Pokok Disdukcapil Kepulauan Anambas?,Tugas Pokok Disdukcapil Kepulauan Anambas adalah melaksanakan urusan pemerintahan yang menjadi kewenangan daerah di bidang administrasi kependudukan dan pencatatan sipil serta tugas pembantuan yang diberikan kepada daerah.,Melaksanakan urusan pemerintahan yang menjadi kewenangan daerah di bidang administrasi kependudukan dan pencatatan sipil dan tugas pembantuan yang diberikan kepada daerah,0.9922720789909363,0.9969452023506165,0.994603157043457
+Apa persyaratan pembuatan kartu keluarga yang rusak?,"Berdasarkan Pasal 13 ayat (1) Peraturan Presiden Nomor 96 Tahun 2018, persyaratan untuk penerbitan Kartu Keluarga karena rusak bagi Penduduk WNI adalah:
+*   Kartu Keluarga (KK) yang rusak
+*   Kartu Tanda Penduduk elektronik (KTP-el)",Mengisi Formulir; Surat Keterangan Hilang Dari Kepolisian; Fotocopy KTP-el; KK Yang Rusak,0.979076087474823,0.982130229473114,0.9806007742881775
+Apa Syarat yang Diperlukan untuk Pembuatan KTP?,"Berdasarkan konteks yang tersedia, persyaratan untuk penerbitan KTP elektronik (KTP-el) adalah sebagai berikut:
+
+**1. Untuk Penduduk WNI yang pindah datang dalam wilayah Negara Kesatuan Republik Indonesia (Berdasarkan Pasal 17 ayat 1):**
+*   Surat keterangan pindah dari Disdukcapil Kabupaten/Kota atau UPT Disdukcapil Kabupaten/Kota daerah asal.
+*   Kartu Keluarga (KK).
+
+**2. Untuk WNI yang datang dari luar wilayah Negara Kesatuan Republik Indonesia (Berdasarkan Pasal 17 ayat 2):**
+*   Surat keterangan pindah dari Perwakilan Republik Indonesia.
+*   Kartu Keluarga (KK).
+
+Kartu Keluarga (KK) merupakan salah satu dokumen utama dalam pembuatan KTP elektronik.",Persyaratan dalam pembuatan KTP Elektronik yaitu: Fotokopi Kartu Keluarga (KK); KTP-el asli (Bagi KTP-el yang rusak); Surat keterangan kehilangan dari kepolisian (Bagi KTP-el yang hilang),0.9814101457595825,0.9882694482803345,0.9848278760910034
+"Jika Saya ingin membuat SKPWNI, bagaimana mekanisme atau prosedurnya?","Untuk membuat Surat Keterangan Pindah Warga Negara Indonesia (SKPWNI), berikut adalah prosedurnya:
+
+1.  Datang ke front office Disdukcapil.
+2.  Mengisi buku tamu.
+3.  Mengambil nomor antrean.
+4.  Menyerahkan berkas persyaratan (KK, KTP-el, dan Surat Keterangan Pindah (SKP) jika pindah antar kabupaten).
+5.  Menunggu panggilan.
+6.  Menerima resi.
+7.  Mengambil SKPWNI di front office.
+
+Proses pembuatan SKPWNI diproses paling lama dalam waktu 2 hari kerja setelah semua persyaratan diterima dan layanan ini tidak dikenakan biaya (gratis).","Menuju ke front office untuk mengisi buku tamu, mengambil nomor antrian, menyerahkan berkas persyaratan; Menunggu panggilan; Petugas memberikan resi pengambilan; Menuju ke front office untuk pengambilan hasil SKPWNI",0.9836748838424683,0.9903469085693359,0.9869996309280396
+Apa Motto Pelayanan Disdukcapil Kepulauan Anambas?,"Motto Pelayanan Disdukcapil Kepulauan Anambas adalah “BERMADAH” yang merupakan singkatan dari:
+*   **B**: BERSIH (BERSIH DARI PUNGUTAN LIAR)
+*   **E**: EFISIEN (PELAYANAN CEPAT DAN TEPAT)
+*   **R**: RESPONSIF (CEPAT TANGGAP DALAM PELAYANAN)
+*   **M**: MUDAH (JENIS PELAYANAN JELAS DAN GRATIS)
+*   **A**: AKUNTABEL (PELAYANAN DAPAT DI PERTANGGUNG JAWABKAN SESUAI PERATURAN)
+*   **D**: DEDIKASI (PENGORBANAN TANPA BATAS DALAM PELAYANAN)
+*   **A**: AMANAH (MENJAGA KERAHASIAAN DATA PENDUDUK)
+*   **H**: HORMAT (HORMATI PEMOHON DENGAN SEPENUH HATI)","Disdukcapil Kepulauan Anambas memiliki motto BERMADAH: Bersih, Efisien, Responsif, Mudah, Akuntabel, Dedikasi, Amanah, Hormat",0.9782878160476685,0.9885115623474121,0.9833731055259705
+Apa Persyaratan Pembuatan Akta Kelahiran?,"Untuk pembuatan Akta Kelahiran, berikut adalah persyaratan umumnya dan beberapa kondisi khusus:
+
+**Persyaratan Umum untuk anak lahir di dalam Indonesia:**
+*   Fotokopi surat keterangan kelahiran dari fasilitas kesehatan (atau asli dari dokter/bidan/Rumah Sakit/penolong kelahiran).
+*   Fotokopi Kartu Keluarga (KK) orang tua.
+*   Fotokopi KTP-el orang tua.
+*   Fotokopi buku nikah atau akta perkawinan orang tua (jika ada).
+
+**Kondisi Khusus:**
+*   **Jika tidak memiliki surat keterangan kelahiran dari penolong kelahiran:** Solusinya adalah dengan menggunakan Surat Pernyataan Tanggung Jawab Mutlak (SPTJM) yang berisi kebenaran data kelahiran, yang ditandatangani oleh dua orang saksi. Hal ini sesuai dengan Peraturan Menteri Dalam Negeri Nomor 9 Tahun 2016 tentang percepatan peningkatan cakupan kepemilikan akta kelahiran.
+*   **Jika orang tua tidak memiliki surat nikah/akta kawin atau ibu masih di bawah umur:** Akta Kelahiran tetap bisa dibuat dengan melampirkan:
+    *   Surat kelahiran asli dari dokter/bidan/Rumah Sakit/penolong kelahiran.
+    *   KK dan KTP-el ibu kandung.
+    *   Surat Pertanggungjawaban Mutlak Pasangan Suami dan Istri.
+    *   Surat Keterangan Anak Seorang Ibu (Dalam hal tidak dapat memenuhi persyaratan buku nikah/kutipan akta perkawinan, anak akan dicatat dalam register akta kelahiran dan kutipan akta kelahiran sebagai anak seorang ibu, sesuai Pasal 42).
+    *   KTP Elektronik 2 orang saksi.
+*   **Jika akta kelahiran belum dibuat sampai anak dewasa:** Akta Kelahiran tetap dapat dibuat dengan melampirkan dokumen pendukung seperti ijazah, KTP, dan KK untuk verifikasi dan pencatatan.",Persyaratan Akta Kelahiran: Surat keterangan lahir dari fasilitas kesehatan; Fotokopi KK orang tua; Fotokopi KTP orang tua; Fotokopi buku nikah atau akta perkawinan,0.9801586866378784,0.9925929307937622,0.9863366484642029
+Siapa Bupati Kabupaten Kepulauan Anambas tahun 2024?,Saya tidak memiliki informasi mengenai siapa Bupati Kabupaten Kepulauan Anambas tahun 2024.,"Maaf, saya tidak menemukan informasi tersebut dalam data yang saya miliki.",0.9833581447601318,0.9878044724464417,0.985576331615448
