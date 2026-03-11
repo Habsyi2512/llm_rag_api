@@ -7,6 +7,7 @@ from app.services.vector_store.vector_store_service import (
 )
 from app.chains.conversation_chain import create_conversation_graph
 from app.core.config import settings
+from app.core.database import init_db
 
 logger = logging.getLogger(__name__)
 
@@ -26,6 +27,9 @@ async def lifespan(app: FastAPI):
     print("Starting up LLM RAG Service...")
 
     try:
+        # Initialize SQLite DB schemas
+        await init_db()
+        logger.info("Database schemas initialized.")
         await initialize_vector_store(
             force_refresh=False, 
             persist_directory=settings.CHROMA_PERSIST_DIR, 

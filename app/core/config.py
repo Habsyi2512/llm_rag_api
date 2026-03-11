@@ -35,6 +35,9 @@ class Settings(BaseSettings):
     # Redis
     REDIS_URL: str = os.getenv("REDIS_URL", "redis://localhost:6379")
 
+    # Database
+    DATABASE_URL: str = os.getenv("DATABASE_URL", "sqlite+aiosqlite:///./rag_database.db")
+
 
     # Menambahkan model_config untuk konfigurasi Pydantic V2
     model_config = ConfigDict(

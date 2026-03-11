@@ -13,3 +13,5 @@ typing_extensions
 google-generativeai
 tiktoken
 pytz
+SQLAlchemy
+aiosqlite
