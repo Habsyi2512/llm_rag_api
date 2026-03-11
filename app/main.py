@@ -12,7 +12,7 @@ logging.basicConfig(
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from app.core.startup import lifespan
-from app.routers import chat_routes, vector_routes
+from app.routers import chat_routes, vector_routes, dashboard_routes
 
 app = FastAPI(
     title="LLM RAG Disdukcapil Anambas",
@@ -30,4 +30,5 @@ app.add_middleware(
 # Register Routers
 app.include_router(chat_routes.router)
 app.include_router(vector_routes.router)
+app.include_router(dashboard_routes.router)
 
