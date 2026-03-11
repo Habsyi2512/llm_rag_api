@@ -6,6 +6,7 @@ class ChatRequest(BaseModel):
     message: str
     user_id: Optional[str] = None # ID unik pengguna atau sesi
     history: Optional[list] = [] # Riwayat percakapan sebelumnya [{"role": "user", "content": "..."}, ...]
+    is_eval: Optional[bool] = False # Flag untuk mengaktifkan prompt sangat singkat selama pengujian
 
 class ChatResponse(BaseModel):
     response: str

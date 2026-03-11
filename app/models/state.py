@@ -16,3 +16,4 @@ class State(TypedDict):
     tracking_number: Optional[str]  # Nomor registrasi jika intent tracking
     tracking_data: Optional[dict]   # Data status dari API Laravel
     category: Optional[str]         # Kategori pertanyaan (KTP, KK, dll)
+    is_eval: Optional[bool]         # Switch untuk pengujian evaluasi (jawaban singkat)

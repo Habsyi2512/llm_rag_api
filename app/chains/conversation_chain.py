@@ -1,7 +1,7 @@
 from langgraph.graph import StateGraph, START, END
 from app.core.config import settings
 from app.models.state import State
-from app.utils.prompt_templates import general_rag_prompt, tracking_prompt, intent_classification_prompt, contextualize_q_prompt
+from app.utils.prompt_templates import general_rag_prompt, evaluation_rag_prompt, tracking_prompt, intent_classification_prompt, contextualize_q_prompt
 from app.agents.document_tracking_agent import DocumentTrackingAgent
 from app.utils.helpers import get_time, preprocess_question
 from app.services.llm_service import get_llm_model
@@ -85,7 +85,10 @@ def generate_general_answer(state: State): # Tidak perlu menerima retriever
     if not history_text:
         history_text = "Belum ada riwayat percakapan."
 
-    chain = general_rag_prompt | model
+    if state.get("is_eval"):
+        chain = evaluation_rag_prompt | model
+    else:
+        chain = general_rag_prompt | model
     response = chain.invoke({ 
         "question": state["question"],
         "context": docs_content,
