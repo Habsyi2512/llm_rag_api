@@ -15,3 +15,8 @@ tiktoken
 pytz
 SQLAlchemy
 aiosqlite
+python-multipart
+langchain-ollama
+greenlet
+rank_bm25
+pymupdf

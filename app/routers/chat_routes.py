@@ -1,5 +1,8 @@
-from fastapi import APIRouter, HTTPException, Security
+from fastapi import APIRouter, HTTPException, Security, Request, Depends
 from fastapi.responses import JSONResponse
+from sqlalchemy.ext.asyncio import AsyncSession
+from app.core.database import get_db
+from app.models.domain import ChatHistory
 from app.core.auth import verify_api_key
 from app.schemas.requests import ChatRequest
 from app.models.state import State
@@ -17,21 +20,21 @@ logger = logging.getLogger(__name__)
 
 @router.post("", include_in_schema=False)
 @router.post("/")
-async def chatbot_endpoint(request: ChatRequest, api_key: str = Security(verify_api_key)):
+async def chatbot_endpoint(request_body: ChatRequest, request: Request, api_key: str = Security(verify_api_key), db: AsyncSession = Depends(get_db)):
     graph = get_graph()
     if not graph:
         raise HTTPException(status_code=503, detail="Service not ready")
 
     state: State = {
-        "question": request.message,
+        "question": request_body.message,
         "context": [],
         "answer": "",
-        "conversation_history": request.history or [],
-        "user_id": request.user_id or "anonymous",
+        "conversation_history": request_body.history or [],
+        "user_id": request_body.user_id or "anonymous",
         "intent": "unknown",
         "tracking_number": None,
         "tracking_data": None,
-        "is_eval": request.is_eval
+        "is_eval": request_body.is_eval
     }
 
     try:
@@ -44,6 +47,21 @@ async def chatbot_endpoint(request: ChatRequest, api_key: str = Security(verify_
             json.dumps(tracking_data, ensure_ascii=False)
         except Exception:
             tracking_data = str(tracking_data)
+
+        # simpan ke ChatHistory
+        try:
+            category_val = final_state.get("category") or final_state.get("intent", "Umum")
+            chat_record = ChatHistory(
+                message=request_body.message,
+                response=final_state.get("answer", "Maaf, belum bisa menjawab."),
+                category=category_val,
+                ip_address=request.client.host if request.client else None,
+                user_agent=request.headers.get("user-agent")[:250] if request.headers.get("user-agent") else None
+            )
+            db.add(chat_record)
+            await db.commit()
+        except Exception as e:
+            logger.error(f"Gagal menyimpan riwayat chat: {e}")
 
         return JSONResponse(content={
             "response": final_state.get("answer", "Maaf, belum bisa menjawab."),
@@ -58,7 +76,7 @@ async def chatbot_endpoint(request: ChatRequest, api_key: str = Security(verify_
 @router.post("/no-rag")
 async def chatbot_endpoint_no_rag(request: ChatRequest, api_key: str = Security(verify_api_key)):
     try:
-        from langchain.schema.output_parser import StrOutputParser
+        from langchain_core.output_parsers import StrOutputParser
         llm = get_llm_model()
 
         if request.is_eval:

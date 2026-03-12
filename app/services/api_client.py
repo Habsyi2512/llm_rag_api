@@ -11,15 +11,27 @@ headers = {
 
 from app.services.vector_store.fetcher import fetch_faqs_from_api, fetch_documents_from_api, fetch_tracking_status_from_api
     
+import os
+
 async def download_file_to_temp(relative_url: str, suffix: str = ".pdf") -> str:
     """
-    Mengunduh file dari URL publik Laravel ke lokasi file temporer lokal.
-    Mengembalikan path file temporer.
+    Returns the local path if the file exists locally, otherwise downloads it into a temp file.
     """
+    # 1. Jika URL adalah path lokal yang sudah ada (misal: uploads/file.pdf)
+    if os.path.exists(relative_url):
+        return relative_url
+        
     temp_path = None
-    # Konstruksi URL lengkap
-    corrected_url_path = relative_url.replace('public/', 'storage/')
-    full_url = f"{settings.LARAVEL_PUBLIC_URL}/{corrected_url_path}"
+    
+    # 2. Jika bukan path lokal, asumsikan itu adalah sisa-sisa URL Laravel lama
+    full_url = relative_url
+    if relative_url.startswith("public/"):
+        corrected_url_path = relative_url.replace('public/', 'storage/')
+        full_url = f"{settings.LARAVEL_PUBLIC_URL}/{corrected_url_path}"
+    elif not full_url.startswith("http"):
+        # Jika tidak ada path lokal & bukan URL, berarti ada kesalahan database path
+        logger.error(f"File lokal tidak ditemukan dan bukan URL HTTP: {relative_url}")
+        raise RuntimeError(f"File tidak ditemukan lokal: {relative_url}")
     
     try:
         async with httpx.AsyncClient(timeout=60.0) as client:

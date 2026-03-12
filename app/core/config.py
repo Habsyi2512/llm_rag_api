@@ -6,7 +6,7 @@ from pydantic import ConfigDict # Impor ConfigDict
 load_dotenv()
 
 class Settings(BaseSettings):
-    FASTAPI_API_KEY: str = os.getenv("FASAPI_API_KEY", "")
+    FASTAPI_API_KEY: str = os.getenv("FASTAPI_API_KEY", "")
 
     # Google
     GOOGLE_API_KEY: str = os.getenv("GOOGLE_API_KEY", "")

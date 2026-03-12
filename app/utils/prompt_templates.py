@@ -1,4 +1,4 @@
-from langchain.prompts import ChatPromptTemplate
+from langchain_core.prompts import ChatPromptTemplate
 
 # Prompt untuk RAG umum (FAQ & Dokumen)
 general_rag_prompt = ChatPromptTemplate.from_messages([

@@ -15,7 +15,7 @@ from app.services.embedding_service import get_embeddings_model
 from app.core.config import settings
 
 from langchain_community.retrievers import BM25Retriever
-from langchain.retrievers import EnsembleRetriever
+from langchain_classic.retrievers import EnsembleRetriever
 from langchain_core.documents import Document
 
 try:
@@ -129,8 +129,8 @@ async def _download_pdf_and_get_chunks(pdf_url: str, metadata: Dict) -> List:
         logger.exception(f"Error processing PDF from {pdf_url}: {e}")
         raise RuntimeError(f"Gagal memproses PDF: {e}")
     finally:
-        # 5. Bersihkan file temporer
-        if temp_path and os.path.exists(temp_path):
+        # 5. Bersihkan file temporer (hanya hapus file temporer unduhan, bukan file uploads lokal)
+        if temp_path and temp_path != pdf_url and os.path.exists(temp_path):
             os.unlink(temp_path)
 
 

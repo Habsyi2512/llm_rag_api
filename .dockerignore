@@ -1,0 +1,13 @@
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+env/
+venv/
+.env
+.vscode/
+.git/
+rag_database.db
+vector_store_db_llm_rag/
+uploads/
