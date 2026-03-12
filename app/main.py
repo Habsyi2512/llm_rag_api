@@ -10,6 +10,7 @@ logging.basicConfig(
 
 # # app/main.py
 from fastapi import FastAPI
+from fastapi.responses import ORJSONResponse
 from fastapi.middleware.cors import CORSMiddleware
 from app.core.startup import lifespan
 from app.routers import chat_routes, vector_routes, dashboard_routes, auth_routes
@@ -17,7 +18,8 @@ from app.routers import chat_routes, vector_routes, dashboard_routes, auth_route
 app = FastAPI(
     title="LLM RAG Disdukcapil Anambas",
     lifespan=lifespan,
-    redirect_slashes=False
+    redirect_slashes=False,
+    default_response_class=ORJSONResponse
 )
 
 app.add_middleware(

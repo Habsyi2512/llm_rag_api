@@ -14,6 +14,7 @@ from app.utils.helpers import get_time
 import json
 import re
 import logging
+import psutil
 
 router = APIRouter(prefix="/chat", tags=["Chatbot"])
 logger = logging.getLogger(__name__)
@@ -119,5 +120,12 @@ async def chatbot_endpoint_no_rag(request: ChatRequest):
 
 @router.get("/health")
 async def health_check():
-    return {"status": "ok", "llm_ready": bool(get_graph())}
+    process = psutil.Process()
+    memory_info = process.memory_info()
+    return {
+        "status": "ok",
+        "llm_ready": bool(get_graph()),
+        "memory_usage_mb": round(memory_info.rss / (1024 * 1024), 2),
+        "cpu_usage_percent": psutil.cpu_percent()
+    }
 

@@ -1,5 +1,5 @@
 # app/services/vector_store/service.py
-import logging, asyncio, inspect, tempfile, httpx, os
+import logging, asyncio, inspect, tempfile, httpx, os, gc
 from typing import Optional, Dict, Any, Callable, List
 from langchain_community.document_loaders import PyMuPDFLoader
 from app.services.vector_store.base import get_state
@@ -76,12 +76,16 @@ async def _create_hybrid_retriever(chroma_client):
         bm25_retriever.k = 4  # Samakan k dengan vector retriever
 
         # 4. Gabungkan dengan EnsembleRetriever
-        # Bobot: 0.3 BM25 (Keyword), 0.7 Vector (Semantic)
-        # Kita naikkan bobot Vector agar pencarian semantik (KK == Kartu Keluarga) lebih dominan
         ensemble_retriever = EnsembleRetriever(
             retrievers=[bm25_retriever, chroma_retriever],
             weights=[0.3, 0.7]
         )
+        
+        # Explicitly clear temporary objects and trigger garbage collection
+        # to free RAM as soon as possible, especially for the large 'documents' list.
+        del documents
+        del collection_data
+        gc.collect()
         
         logger.info("Hybrid Retriever berhasil dibuat.")
         return ensemble_retriever
