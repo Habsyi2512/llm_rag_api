@@ -16,7 +16,8 @@ from app.routers import chat_routes, vector_routes, dashboard_routes, auth_route
 
 app = FastAPI(
     title="LLM RAG Disdukcapil Anambas",
-    lifespan=lifespan
+    lifespan=lifespan,
+    redirect_slashes=False
 )
 
 app.add_middleware(

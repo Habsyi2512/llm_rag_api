@@ -18,6 +18,7 @@ import logging
 router = APIRouter(prefix="/chat", tags=["Chatbot"])
 logger = logging.getLogger(__name__)
 
+@router.post("")
 @router.post("/")
 async def chatbot_endpoint(request_body: ChatRequest, request: Request, db: AsyncSession = Depends(get_db)):
     graph = get_graph()
@@ -73,6 +74,7 @@ async def chatbot_endpoint(request_body: ChatRequest, request: Request, db: Asyn
         return JSONResponse(status_code=500, content={"detail": f"Internal processing error: {str(e)}"})
 
 @router.post("/no-rag")
+@router.post("/no-rag/")
 async def chatbot_endpoint_no_rag(request: ChatRequest):
     try:
         from langchain_core.output_parsers import StrOutputParser
