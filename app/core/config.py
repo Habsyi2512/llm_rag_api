@@ -37,6 +37,15 @@ class Settings(BaseSettings):
 
     # Database
     DATABASE_URL: str = os.getenv("DATABASE_URL", "sqlite+aiosqlite:///./rag_database.db")
+    
+    # JWT Settings
+    JWT_SECRET_KEY: str = os.getenv("JWT_SECRET_KEY", "9dfd664c-b691-42e9-b6e0-d5f77c57d692")
+    JWT_ALGORITHM: str = os.getenv("JWT_ALGORITHM", "HS256")
+    ACCESS_TOKEN_EXPIRE_HOURS: int = int(os.getenv("ACCESS_TOKEN_EXPIRE_HOURS", "2"))
+    
+    # Admin Credentials (Hardcoded for simple refactor, usually in DB)
+    ADMIN_EMAIL: str = os.getenv("ADMIN_EMAIL", "admin@anambas.go.id")
+    ADMIN_PASSWORD: str = os.getenv("ADMIN_PASSWORD", "passwordanambas")
 
 
     # Menambahkan model_config untuk konfigurasi Pydantic V2

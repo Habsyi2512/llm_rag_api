@@ -18,9 +18,8 @@ import logging
 router = APIRouter(prefix="/chat", tags=["Chatbot"])
 logger = logging.getLogger(__name__)
 
-@router.post("", include_in_schema=False)
 @router.post("/")
-async def chatbot_endpoint(request_body: ChatRequest, request: Request, api_key: str = Security(verify_api_key), db: AsyncSession = Depends(get_db)):
+async def chatbot_endpoint(request_body: ChatRequest, request: Request, db: AsyncSession = Depends(get_db)):
     graph = get_graph()
     if not graph:
         raise HTTPException(status_code=503, detail="Service not ready")
@@ -74,7 +73,7 @@ async def chatbot_endpoint(request_body: ChatRequest, request: Request, api_key:
         return JSONResponse(status_code=500, content={"detail": f"Internal processing error: {str(e)}"})
 
 @router.post("/no-rag")
-async def chatbot_endpoint_no_rag(request: ChatRequest, api_key: str = Security(verify_api_key)):
+async def chatbot_endpoint_no_rag(request: ChatRequest):
     try:
         from langchain_core.output_parsers import StrOutputParser
         llm = get_llm_model()

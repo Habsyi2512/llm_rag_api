@@ -20,3 +20,7 @@ langchain-ollama
 greenlet
 rank_bm25
 pymupdf
+python-jose[cryptography]
+passlib[bcrypt]
+pydantic[email]
+pydantic-settings
