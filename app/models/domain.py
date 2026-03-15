@@ -1,6 +1,7 @@
 import datetime
 import json
-from sqlalchemy import Column, Integer, String, Text, DateTime, Date, JSON
+from sqlalchemy import Column, Integer, String, Text, DateTime, Date, JSON, ForeignKey
+from sqlalchemy.orm import relationship
 from app.core.database import Base
 
 class Faq(Base):
@@ -47,3 +48,39 @@ class ChatHistory(Base):
     user_agent = Column(String(255), nullable=True)
     created_at = Column(DateTime, default=datetime.datetime.utcnow)
     updated_at = Column(DateTime, default=datetime.datetime.utcnow, onupdate=datetime.datetime.utcnow)
+
+class User(Base):
+    __tablename__ = "users"
+
+    id = Column(Integer, primary_key=True, index=True)
+    email = Column(String(255), unique=True, index=True, nullable=False)
+    password_hash = Column(String(255), nullable=False)
+    asal_desa = Column(String(255), nullable=True)
+    role = Column(String(50), default="user") # admin / user
+    created_at = Column(DateTime, default=datetime.datetime.utcnow)
+
+    sessions = relationship("ChatSession", back_populates="user", cascade="all, delete-orphan")
+
+class ChatSession(Base):
+    __tablename__ = "chat_sessions"
+
+    id = Column(Integer, primary_key=True, index=True)
+    user_id = Column(Integer, ForeignKey("users.id"), nullable=False)
+    title = Column(String(255), nullable=True)
+    created_at = Column(DateTime, default=datetime.datetime.utcnow)
+    updated_at = Column(DateTime, default=datetime.datetime.utcnow, onupdate=datetime.datetime.utcnow)
+
+    user = relationship("User", back_populates="sessions")
+    messages = relationship("ChatMessage", back_populates="session", cascade="all, delete-orphan")
+
+class ChatMessage(Base):
+    __tablename__ = "chat_messages"
+
+    id = Column(Integer, primary_key=True, index=True)
+    session_id = Column(Integer, ForeignKey("chat_sessions.id"), nullable=False)
+    role = Column(String(50), nullable=False) # user / assistant
+    content = Column(Text, nullable=False)
+    retrieved_docs = Column(JSON, nullable=True)
+    created_at = Column(DateTime, default=datetime.datetime.utcnow)
+
+    session = relationship("ChatSession", back_populates="messages")

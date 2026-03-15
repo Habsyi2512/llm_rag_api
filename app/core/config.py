@@ -36,7 +36,18 @@ class Settings(BaseSettings):
     REDIS_URL: str = os.getenv("REDIS_URL", "redis://localhost:6379")
 
     # Database
-    DATABASE_URL: str = os.getenv("DATABASE_URL", "sqlite+aiosqlite:///./rag_database.db")
+    DB_HOST: str = os.getenv("DB_HOST", "localhost")
+    DB_PORT: str = os.getenv("DB_PORT", "3306")
+    DB_USER: str = os.getenv("DB_USER", "root")
+    DB_PASSWORD: str = os.getenv("DB_PASSWORD", "")
+    DB_NAME: str = os.getenv("DB_NAME", "rag_db")
+    
+    # Default to MySQL if host is provided, otherwise fallback to SQLite
+    DATABASE_URL: str = os.getenv(
+        "DATABASE_URL", 
+        f"mysql+aiomysql://{DB_USER}:{DB_PASSWORD}@{DB_HOST}:{DB_PORT}/{DB_NAME}" 
+        if os.getenv("DB_HOST") else "sqlite+aiosqlite:///./rag_database.db"
+    )
     
     # JWT Settings
     JWT_SECRET_KEY: str = os.getenv("JWT_SECRET_KEY", "9dfd664c-b691-42e9-b6e0-d5f77c57d692")

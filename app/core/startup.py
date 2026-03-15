@@ -8,6 +8,7 @@ from app.services.vector_store.vector_store_service import (
 from app.chains.conversation_chain import create_conversation_graph
 from app.core.config import settings
 from app.core.database import init_db
+import app.models.domain as domain_models
 
 logger = logging.getLogger(__name__)
 

@@ -8,8 +8,8 @@ from typing import List
 from datetime import datetime
 
 from app.core.database import get_db
-from app.core.auth import verify_api_key
-from app.models.domain import Faq, Document, DocumentTracking, ChatHistory
+from app.core.auth import get_current_admin
+from app.models.domain import Faq, Document, DocumentTracking, ChatHistory, User, ChatMessage, ChatSession
 from app.schemas.dashboard import (
     FaqCreate, FaqUpdate, FaqResponse,
     DocumentCreate, DocumentUpdate, DocumentResponse,
@@ -65,7 +65,7 @@ async def get_faqs(page: int = 1, search: str = "", db: AsyncSession = Depends(g
     }
 
 @router.post("/faqs", response_model=FaqResponse)
-async def create_faq(faq: FaqCreate, background_tasks: BackgroundTasks, db: AsyncSession = Depends(get_db), api_key: str = Security(verify_api_key)):
+async def create_faq(faq: FaqCreate, background_tasks: BackgroundTasks, db: AsyncSession = Depends(get_db), admin: User = Depends(get_current_admin)):
     new_faq = Faq(**faq.model_dump())
     db.add(new_faq)
     await db.commit()
@@ -90,7 +90,7 @@ async def get_faq(faq_id: int, db: AsyncSession = Depends(get_db)):
     return faq
 
 @router.put("/faqs/{faq_id}", response_model=FaqResponse)
-async def update_faq(faq_id: int, faq: FaqUpdate, background_tasks: BackgroundTasks, db: AsyncSession = Depends(get_db), api_key: str = Security(verify_api_key)):
+async def update_faq(faq_id: int, faq: FaqUpdate, background_tasks: BackgroundTasks, db: AsyncSession = Depends(get_db), admin: User = Depends(get_current_admin)):
     result = await db.execute(select(Faq).where(Faq.id == faq_id))
     db_faq = result.scalars().first()
     if not db_faq:
@@ -115,7 +115,7 @@ async def update_faq(faq_id: int, faq: FaqUpdate, background_tasks: BackgroundTa
     return db_faq
 
 @router.delete("/faqs/{faq_id}")
-async def delete_faq(faq_id: int, background_tasks: BackgroundTasks, db: AsyncSession = Depends(get_db), api_key: str = Security(verify_api_key)):
+async def delete_faq(faq_id: int, background_tasks: BackgroundTasks, db: AsyncSession = Depends(get_db), admin: User = Depends(get_current_admin)):
     result = await db.execute(select(Faq).where(Faq.id == faq_id))
     faq = result.scalars().first()
     if not faq:
@@ -172,7 +172,7 @@ async def create_document(
     title: str = Form(...),
     file: UploadFile = File(...),
     db: AsyncSession = Depends(get_db),
-    api_key: str = Security(verify_api_key)
+    admin: User = Depends(get_current_admin)
 ):
     upload_dir = "uploads"
     os.makedirs(upload_dir, exist_ok=True)
@@ -216,7 +216,7 @@ async def get_document(doc_id: int, db: AsyncSession = Depends(get_db)):
     return doc
 
 @router.put("/documents/{doc_id}", response_model=DocumentResponse)
-async def update_document(doc_id: int, doc: DocumentUpdate, background_tasks: BackgroundTasks, db: AsyncSession = Depends(get_db), api_key: str = Security(verify_api_key)):
+async def update_document(doc_id: int, doc: DocumentUpdate, background_tasks: BackgroundTasks, db: AsyncSession = Depends(get_db), admin: User = Depends(get_current_admin)):
     result = await db.execute(select(Document).where(Document.id == doc_id))
     db_doc = result.scalars().first()
     if not db_doc:
@@ -240,7 +240,7 @@ async def update_document(doc_id: int, doc: DocumentUpdate, background_tasks: Ba
     return db_doc
 
 @router.delete("/documents/{doc_id}")
-async def delete_document(doc_id: int, background_tasks: BackgroundTasks, db: AsyncSession = Depends(get_db), api_key: str = Security(verify_api_key)):
+async def delete_document(doc_id: int, background_tasks: BackgroundTasks, db: AsyncSession = Depends(get_db), admin: User = Depends(get_current_admin)):
     result = await db.execute(select(Document).where(Document.id == doc_id))
     doc = result.scalars().first()
     if not doc:
@@ -299,7 +299,7 @@ async def get_trackings(page: int = 1, search: str = "", db: AsyncSession = Depe
     }
 
 @router.post("/document-tracking", response_model=DocumentTrackingResponse)
-async def create_tracking(tracking: DocumentTrackingCreate, db: AsyncSession = Depends(get_db), api_key: str = Security(verify_api_key)):
+async def create_tracking(tracking: DocumentTrackingCreate, db: AsyncSession = Depends(get_db), admin: User = Depends(get_current_admin)):
     new_tracking = DocumentTracking(**tracking.model_dump())
     db.add(new_tracking)
     await db.commit()
@@ -315,7 +315,7 @@ async def get_tracking(tracking_id: int, db: AsyncSession = Depends(get_db)):
     return tracking
 
 @router.put("/document-tracking/{tracking_id}", response_model=DocumentTrackingResponse)
-async def update_tracking(tracking_id: int, tracking: DocumentTrackingUpdate, db: AsyncSession = Depends(get_db), api_key: str = Security(verify_api_key)):
+async def update_tracking(tracking_id: int, tracking: DocumentTrackingUpdate, db: AsyncSession = Depends(get_db), admin: User = Depends(get_current_admin)):
     result = await db.execute(select(DocumentTracking).where(DocumentTracking.id == tracking_id))
     db_tracking = result.scalars().first()
     if not db_tracking:
@@ -330,7 +330,7 @@ async def update_tracking(tracking_id: int, tracking: DocumentTrackingUpdate, db
     return db_tracking
 
 @router.delete("/document-tracking/{tracking_id}")
-async def delete_tracking(tracking_id: int, db: AsyncSession = Depends(get_db), api_key: str = Security(verify_api_key)):
+async def delete_tracking(tracking_id: int, db: AsyncSession = Depends(get_db), admin: User = Depends(get_current_admin)):
     result = await db.execute(select(DocumentTracking).where(DocumentTracking.id == tracking_id))
     tracking = result.scalars().first()
     if not tracking:
@@ -346,11 +346,11 @@ async def delete_tracking(tracking_id: int, db: AsyncSession = Depends(get_db), 
 # ==========================================
 
 @router.get("/dashboard-stats")
-async def get_dashboard_stats(db: AsyncSession = Depends(get_db), api_key: str = Security(verify_api_key)):
+async def get_dashboard_stats(db: AsyncSession = Depends(get_db), admin: User = Depends(get_current_admin)):
     faq_count = await db.scalar(select(func.count(Faq.id)))
     doc_count = await db.scalar(select(func.count(Document.id)))
     track_count = await db.scalar(select(func.count(DocumentTracking.id)))
-    chat_count = await db.scalar(select(func.count(ChatHistory.id)))
+    chat_count = await db.scalar(select(func.count(ChatMessage.id)))
     
     return {
         "faqCount": faq_count or 0,
@@ -360,27 +360,14 @@ async def get_dashboard_stats(db: AsyncSession = Depends(get_db), api_key: str =
     }
 
 @router.get("/chat-stats")
-async def get_chat_stats(db: AsyncSession = Depends(get_db), api_key: str = Security(verify_api_key)):
-    # Group by category
-    query = select(ChatHistory.category, func.count(ChatHistory.id).label("total")).group_by(ChatHistory.category)
-    result = await db.execute(query)
-    rows = result.all()
-    
-    stats = []
-    for row in rows:
-        stats.append({
-            "category": row.category or "Umum",
-            "total": row.total
-        })
-    
-    # If empty, return a default category
-    if not stats:
-        stats.append({"category": "Belum ada data", "total": 0})
-        
-    return stats
+async def get_chat_stats(db: AsyncSession = Depends(get_db), admin: User = Depends(get_current_admin)):
+    # Group by role or use a placeholder if category isn't in ChatMessage
+    # For now, let's just count total messages per session or similar
+    # or just keep it simple
+    return [{"category": "Total Messages", "total": await db.scalar(select(func.count(ChatMessage.id)))}]
 
 @router.get("/chat-history", response_model=List[ChatHistoryResponse])
-async def get_chat_histories(db: AsyncSession = Depends(get_db), api_key: str = Security(verify_api_key)):
+async def get_chat_histories(db: AsyncSession = Depends(get_db), admin: User = Depends(get_current_admin)):
     result = await db.execute(select(ChatHistory))
     return result.scalars().all()
 
@@ -394,7 +381,7 @@ async def create_chat_history(chat: ChatHistoryCreate, db: AsyncSession = Depend
     return new_chat
 
 @router.delete("/chat-history/{chat_id}")
-async def delete_chat_history(chat_id: int, db: AsyncSession = Depends(get_db), api_key: str = Security(verify_api_key)):
+async def delete_chat_history(chat_id: int, db: AsyncSession = Depends(get_db), admin: User = Depends(get_current_admin)):
     result = await db.execute(select(ChatHistory).where(ChatHistory.id == chat_id))
     chat = result.scalars().first()
     if not chat:

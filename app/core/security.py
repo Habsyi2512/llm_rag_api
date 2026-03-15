@@ -1,11 +1,8 @@
-# app/core/security.py
+import bcrypt
 from datetime import datetime, timedelta
 from typing import Any, Union
 from jose import jwt
-from passlib.context import CryptContext
 from app.core.config import settings
-
-pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
 def create_access_token(subject: Union[str, Any], expires_delta: timedelta = None) -> str:
     if expires_delta:
@@ -18,15 +15,27 @@ def create_access_token(subject: Union[str, Any], expires_delta: timedelta = Non
     return encoded_jwt
 
 def verify_password(plain_password: str, hashed_password: str) -> bool:
-    # If the stored password is not hashed (for simple demo/migration), we might want to handle it
-    # But for production, always use hashed passwords.
-    # Here we assume ADMIN_PASSWORD in env might be plain for simple setup, 
-    # but we'll try to verify it properly.
     try:
-        return pwd_context.verify(plain_password, hashed_password)
-    except Exception:
-        # Fallback for plain text comparison if hashing fails (NOT RECOMMENDED for production)
+        # Check if it's already a bcrypt hash (starts with $2b$)
+        if hashed_password.startswith("$2") or hashed_password.startswith("$2b$"):
+            return bcrypt.checkpw(
+                plain_password.encode("utf-8"), 
+                hashed_password.encode("utf-8")
+            )
+        # Fallback for plain text (e.g. from initial setup/env)
         return plain_password == hashed_password
+    except Exception as e:
+        print(f"Password verification error: {e}")
+        return False
 
 def get_password_hash(password: str) -> str:
-    return pwd_context.hash(password)
+    # Ensure password is not over 72 bytes for bcrypt
+    pwd_bytes = password.encode("utf-8")
+    if len(pwd_bytes) > 72:
+        # Option 1: Truncate (commonly done)
+        # Option 2: Error (safer if user needs to know)
+        # We'll truncate to match standard bcrypt behavior but avoid direct ValueError
+        pwd_bytes = pwd_bytes[:72]
+    
+    salt = bcrypt.gensalt()
+    return bcrypt.hashpw(pwd_bytes, salt).decode("utf-8")

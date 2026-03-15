@@ -26,3 +26,5 @@ pydantic[email]
 pydantic-settings
 orjson
 psutil
+aiomysql
+cryptography
