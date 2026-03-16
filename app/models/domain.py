@@ -1,6 +1,6 @@
 import datetime
 import uuid
-from sqlalchemy import Column, Integer, String, Text, DateTime, Date, JSON, ForeignKey
+from sqlalchemy import Column, Integer, String, Text, DateTime, Date, JSON, ForeignKey, Float
 from sqlalchemy.orm import relationship
 from app.core.database import Base
 
@@ -81,6 +81,7 @@ class ChatMessage(Base):
     role = Column(String(50), nullable=False) # user / assistant
     content = Column(Text, nullable=False)
     retrieved_docs = Column(JSON, nullable=True)
+    response_time = Column(Float, nullable=True)
     created_at = Column(DateTime, default=datetime.datetime.utcnow)
 
     session = relationship("ChatSession", back_populates="messages")

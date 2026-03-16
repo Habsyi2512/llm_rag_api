@@ -6,6 +6,7 @@ class ChatMessageBase(BaseModel):
     role: str
     content: str
     retrieved_docs: Optional[Any] = None
+    response_time: Optional[float] = None
 
 class ChatMessageResponse(ChatMessageBase):
     id: int

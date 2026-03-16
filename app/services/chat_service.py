@@ -25,12 +25,13 @@ async def create_chat_session(db: AsyncSession, user_id: int, initial_message: s
     # await db.refresh(session) # Removed to avoid potential MissingGreenlet issues
     return session
 
-async def save_chat_message(db: AsyncSession, session_id: str, role: str, content: str, retrieved_docs: list = None):
+async def save_chat_message(db: AsyncSession, session_id: str, role: str, content: str, retrieved_docs: list = None, response_time: float = None):
     message = ChatMessage(
         session_id=session_id,
         role=role,
         content=content,
-        retrieved_docs=retrieved_docs
+        retrieved_docs=retrieved_docs,
+        response_time=response_time
     )
     db.add(message)
     await db.commit()

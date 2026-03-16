@@ -11,6 +11,7 @@ from app.core.startup import get_graph
 from app.models.state import State
 from typing import List
 import logging
+import time
 
 router = APIRouter(prefix="/chat", tags=["Chatbot"])
 logger = logging.getLogger(__name__)
@@ -61,17 +62,22 @@ async def chatbot_endpoint(
     }
 
     try:
+        start_time = time.time()
         final_state = await graph.ainvoke(state)
+        end_time = time.time()
+        duration = end_time - start_time
+
         answer = final_state.get("answer", "Maaf, belum bisa menjawab.")
         retrieved_docs = [doc.page_content for doc in final_state.get("context", [])]
         
-        # 5. Save Assistant Message
+        # 5. Save Assistant Message with response_time
         await save_chat_message(
             db, 
             session_id, 
             "assistant", 
             answer, 
-            retrieved_docs=retrieved_docs
+            retrieved_docs=retrieved_docs,
+            response_time=duration
         )
 
         return JSONResponse(content={
@@ -79,7 +85,8 @@ async def chatbot_endpoint(
             "response": answer,
             "intent": final_state.get("intent", "general"),
             "category": final_state.get("category", "Umum"),
-            "retrieved_docs": retrieved_docs
+            "retrieved_docs": retrieved_docs,
+            "response_time": duration
         })
     except Exception as e:
         logger.exception("Chat error:")
