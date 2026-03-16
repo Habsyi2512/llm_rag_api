@@ -8,7 +8,7 @@ class State(TypedDict):
     answer: str
 
     # --- Untuk percakapan ---
-    conversation_history: List[str] # Riwayat percakapan
+    conversation_history: List[dict] # Riwayat percakapan
     user_id: Optional[str]          # ID sesi pengguna
     
     # --- Untuk pelacakan dokumen ---

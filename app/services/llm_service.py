@@ -35,9 +35,5 @@ def get_llm_model():
     else:
         raise ValueError(f"Unsupported LLM_PROVIDER: {provider}. Supported values are 'google' and 'ollama'.")
     
-    # --- Debugging: Mulai ---
-    print("LLM Model:")
-    answer = llm.invoke('halo')
-    print(f"Answer: {answer.content}")
     # --- Debugging: Selesai ---
     return llm

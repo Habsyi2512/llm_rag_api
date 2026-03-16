@@ -9,7 +9,7 @@ class ChatMessageBase(BaseModel):
 
 class ChatMessageResponse(ChatMessageBase):
     id: int
-    session_id: int
+    session_id: str
     created_at: datetime
 
     class Config:
@@ -19,7 +19,7 @@ class ChatSessionBase(BaseModel):
     title: Optional[str] = None
 
 class ChatSessionResponse(ChatSessionBase):
-    id: int
+    id: str
     user_id: int
     created_at: datetime
     updated_at: datetime
@@ -32,4 +32,4 @@ class ChatSessionWithMessages(ChatSessionResponse):
 
 class ChatRequest(BaseModel):
     message: str
-    session_id: Optional[int] = None # If None, create new session
+    session_id: Optional[str] = None # If None, create new session

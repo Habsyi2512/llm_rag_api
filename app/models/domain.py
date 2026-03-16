@@ -1,5 +1,5 @@
 import datetime
-import json
+import uuid
 from sqlalchemy import Column, Integer, String, Text, DateTime, Date, JSON, ForeignKey
 from sqlalchemy.orm import relationship
 from app.core.database import Base
@@ -59,25 +59,25 @@ class User(Base):
     role = Column(String(50), default="user") # admin / user
     created_at = Column(DateTime, default=datetime.datetime.utcnow)
 
-    sessions = relationship("ChatSession", back_populates="user", cascade="all, delete-orphan")
+    sessions = relationship("ChatSession", back_populates="user", cascade="all, delete-orphan", lazy="selectin")
 
 class ChatSession(Base):
     __tablename__ = "chat_sessions"
 
-    id = Column(Integer, primary_key=True, index=True)
+    id = Column(String(36), primary_key=True, default=lambda: str(uuid.uuid4()))
     user_id = Column(Integer, ForeignKey("users.id"), nullable=False)
     title = Column(String(255), nullable=True)
     created_at = Column(DateTime, default=datetime.datetime.utcnow)
     updated_at = Column(DateTime, default=datetime.datetime.utcnow, onupdate=datetime.datetime.utcnow)
 
     user = relationship("User", back_populates="sessions")
-    messages = relationship("ChatMessage", back_populates="session", cascade="all, delete-orphan")
+    messages = relationship("ChatMessage", back_populates="session", cascade="all, delete-orphan", lazy="selectin")
 
 class ChatMessage(Base):
     __tablename__ = "chat_messages"
 
     id = Column(Integer, primary_key=True, index=True)
-    session_id = Column(Integer, ForeignKey("chat_sessions.id"), nullable=False)
+    session_id = Column(String(36), ForeignKey("chat_sessions.id"), nullable=False)
     role = Column(String(50), nullable=False) # user / assistant
     content = Column(Text, nullable=False)
     retrieved_docs = Column(JSON, nullable=True)

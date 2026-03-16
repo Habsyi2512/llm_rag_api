@@ -1,6 +1,7 @@
 from fastapi import APIRouter, HTTPException, Depends, Request
 from fastapi.responses import JSONResponse
 from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy import select
 from app.core.database import get_db
 from app.core.auth import get_current_user
 from app.models.domain import User, ChatSession, ChatMessage
@@ -40,7 +41,7 @@ async def chatbot_endpoint(
     history_messages = await get_session_messages(db, session_id)
     langchain_history = []
     for m in history_messages:
-        langchain_history.append(f"{m.role}: {m.content}")
+        langchain_history.append({"role": m.role, "content": m.content})
 
     # 3. Save User Message
     await save_chat_message(db, session_id, "user", request_body.message)
@@ -93,16 +94,22 @@ async def list_sessions(
 
 @router.get("/session/{session_id}", response_model=ChatSessionWithMessages)
 async def get_session_details(
-    session_id: int,
+    session_id: str,
     db: AsyncSession = Depends(get_db),
     current_user: User = Depends(get_current_user)
 ):
-    session = await db.get(ChatSession, session_id)
-    if not session or session.user_id != current_user.id:
+    from sqlalchemy.orm import selectinload
+    
+    result = await db.execute(
+        select(ChatSession)
+        .where(ChatSession.id == session_id, ChatSession.user_id == current_user.id)
+        .options(selectinload(ChatSession.messages))
+    )
+    session = result.scalars().first()
+    
+    if not session:
         raise HTTPException(status_code=404, detail="Session not found")
     
-    messages = await get_session_messages(db, session_id)
-    session.messages = messages
     return session
 
 

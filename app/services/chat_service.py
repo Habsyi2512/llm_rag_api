@@ -22,10 +22,10 @@ async def create_chat_session(db: AsyncSession, user_id: int, initial_message: s
     session = ChatSession(user_id=user_id, title=title)
     db.add(session)
     await db.commit()
-    await db.refresh(session)
+    # await db.refresh(session) # Removed to avoid potential MissingGreenlet issues
     return session
 
-async def save_chat_message(db: AsyncSession, session_id: int, role: str, content: str, retrieved_docs: list = None):
+async def save_chat_message(db: AsyncSession, session_id: str, role: str, content: str, retrieved_docs: list = None):
     message = ChatMessage(
         session_id=session_id,
         role=role,
@@ -44,7 +44,7 @@ async def get_user_sessions(db: AsyncSession, user_id: int):
     )
     return result.scalars().all()
 
-async def get_session_messages(db: AsyncSession, session_id: int):
+async def get_session_messages(db: AsyncSession, session_id: str):
     result = await db.execute(
         select(ChatMessage)
         .where(ChatMessage.session_id == session_id)
