@@ -135,20 +135,25 @@ intent_classification_prompt = ChatPromptTemplate.from_messages([
 
 # Prompt untuk membuat pertanyaan mandiri (Standalone Question) berdasarkan history
 contextualize_q_prompt = ChatPromptTemplate.from_messages([
-    ("system", """Diberikan riwayat percakapan dan pertanyaan terbaru dari pengguna yang mungkin merujuk pada konteks sebelumnya.
-    Formulasikan ulang pertanyaan tersebut menjadi pertanyaan mandiri (standalone question) yang dapat dipahami tanpa melihat riwayat percakapan.
-    JANGAN menjawab pertanyaan tersebut, hanya formulasikan ulang jika perlu.
-    Jika pertanyaan sudah jelas dan mandiri, kembalikan apa adanya.
-    
-    Contoh:
-    Riwayat: 
-    User: Apa syarat buat KTP?
-    AI: Syaratnya adalah...
-    Pertanyaan Baru: Berapa lama jadinya?
-    Output: Berapa lama proses pembuatan KTP?
-    
-    Riwayat Percakapan:
-    {history}
-    """),
-    ("human", "{question}")
+    ("system", """TUGASMU HANYA MERUMUSKAN ULANG PERTANYAAN (REPHRASE).
+Diberikan riwayat percakapan dan pertanyaan terbaru dari pengguna, formulasikan ulang pertanyaan tersebut menjadi pertanyaan mandiri (standalone question) yang utuh.
+JANGAN SEKALI-KALI MENJAWAB PERTANYAAN TERSEBUT.
+HANYA berikan output berupa pertanyaan yang sudah ditulis ulang tanpa embel-embel kalimat pengantar atau penutup.
+
+Contoh 1:
+Riwayat:
+User: Apa syarat buat KTP?
+AI: Syarat pembuatan KTP adalah fotokopi KK.
+Pertanyaan Baru: Berapa lama ngurusnya?
+Output: Berapa lama proses pembuatan KTP?
+
+Contoh 2:
+Riwayat: Belum ada
+Pertanyaan Baru: dimana lokasi kantor disdukcapil anambas
+Output: dimana lokasi kantor disdukcapil anambas
+
+Riwayat Percakapan:
+{history}
+"""),
+    ("human", "Tugasmu HANYA merumuskan ulang kalimat berikut agar mandiri. JANGAN DIJAWAB!\nKalimat pengguna: {question}\nHasil Rumusan Ulang (langsung tanpa pengantar):")
 ])

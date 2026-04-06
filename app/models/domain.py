@@ -80,6 +80,7 @@ class ChatMessage(Base):
     session_id = Column(String(36), ForeignKey("chat_sessions.id"), nullable=False)
     role = Column(String(50), nullable=False) # user / assistant
     content = Column(Text, nullable=False)
+    category = Column(String(100), nullable=True)  # Kategori pertanyaan (KTP, KK, Akta, dll)
     retrieved_docs = Column(JSON, nullable=True)
     response_time = Column(Float, nullable=True)
     created_at = Column(DateTime, default=datetime.datetime.utcnow)

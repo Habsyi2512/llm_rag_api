@@ -69,15 +69,17 @@ async def chatbot_endpoint(
 
         answer = final_state.get("answer", "Maaf, belum bisa menjawab.")
         retrieved_docs = [doc.page_content for doc in final_state.get("context", [])]
+        category = final_state.get("category", "Umum")
         
-        # 5. Save Assistant Message with response_time
+        # 5. Save Assistant Message with response_time and category
         await save_chat_message(
             db, 
             session_id, 
             "assistant", 
             answer, 
             retrieved_docs=retrieved_docs,
-            response_time=duration
+            response_time=duration,
+            category=category
         )
 
         return JSONResponse(content={
