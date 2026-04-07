@@ -18,7 +18,10 @@ engine = create_async_engine(
     settings.DATABASE_URL,
     echo=False,
     future=True,
-    connect_args={"check_same_thread": False} if is_sqlite else {},
+    connect_args=(
+        {"check_same_thread": False} if is_sqlite 
+        else {"init_command": "SET time_zone='+07:00'"}
+    ),
     # MySQL specific pooling
     **({
         "pool_size": 10,

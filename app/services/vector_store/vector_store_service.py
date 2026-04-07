@@ -155,6 +155,7 @@ async def _create_or_connect_chroma(
     collection_name = collection_name or settings.CHROMA_COLLECTION_NAME
 
     def _sync_create():
+        logger.info(f"Sync creating Chroma: dir={persist_directory}, col={collection_name}")
         try:
             try:
                 chroma = Chroma(
@@ -162,10 +163,14 @@ async def _create_or_connect_chroma(
                     persist_directory=persist_directory,
                     collection_name=collection_name,
                 )
-            except TypeError:
+                logger.info("Chroma successfully initialized with persist_directory")
+            except Exception as inner_e:
+                logger.warning(f"Chroma init failed with persist_directory: {inner_e}. Falling back to default.")
                 chroma = Chroma(embeddings)
+                logger.info("Chroma initialized with fallback")
             return chroma
-        except Exception:
+        except Exception as e:
+            logger.error(f"Critical error in _sync_create chroma: {e}")
             raise
 
     chroma = await asyncio.to_thread(_sync_create)

@@ -53,3 +53,20 @@ async def get_session_messages(db: AsyncSession, session_id: str):
         .order_by(ChatMessage.created_at.asc())
     )
     return result.scalars().all()
+
+async def update_chat_session(db: AsyncSession, session_id: str, title: str):
+    session = await db.get(ChatSession, session_id)
+    if session:
+        session.title = title
+        await db.commit()
+    return session
+
+async def delete_chat_session(db: AsyncSession, session_id: str):
+    session = await db.get(ChatSession, session_id)
+    if session:
+        # Messages usually deleted by cascade, but let's be explicit if needed
+        # Or depend on FK cascade in DB
+        await db.delete(session)
+        await db.commit()
+        return True
+    return False

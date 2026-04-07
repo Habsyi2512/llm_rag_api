@@ -5,8 +5,15 @@ from sqlalchemy import select
 from app.core.database import get_db
 from app.core.auth import get_current_user
 from app.models.domain import User, ChatSession, ChatMessage
-from app.schemas.chat import ChatRequest, ChatSessionResponse, ChatMessageResponse, ChatSessionWithMessages
-from app.services.chat_service import create_chat_session, save_chat_message, get_user_sessions, get_session_messages
+from app.schemas.chat import ChatRequest, ChatSessionResponse, ChatMessageResponse, ChatSessionWithMessages, ChatSessionBase
+from app.services.chat_service import (
+    create_chat_session, 
+    save_chat_message, 
+    get_user_sessions, 
+    get_session_messages,
+    update_chat_session,
+    delete_chat_session
+)
 from app.core.startup import get_graph
 from app.models.state import State
 from typing import List
@@ -120,5 +127,37 @@ async def get_session_details(
         raise HTTPException(status_code=404, detail="Session not found")
     
     return session
+
+@router.put("/session/{session_id}", response_model=ChatSessionResponse)
+async def update_session(
+    session_id: str,
+    request: ChatSessionBase,
+    db: AsyncSession = Depends(get_db),
+    current_user: User = Depends(get_current_user)
+):
+    session = await db.get(ChatSession, session_id)
+    if not session or session.user_id != current_user.id:
+        raise HTTPException(status_code=404, detail="Session not found")
+    
+    if not request.title:
+        raise HTTPException(status_code=400, detail="Title cannot be empty")
+        
+    return await update_chat_session(db, session_id, request.title)
+
+@router.delete("/session/{session_id}")
+async def delete_session(
+    session_id: str,
+    db: AsyncSession = Depends(get_db),
+    current_user: User = Depends(get_current_user)
+):
+    session = await db.get(ChatSession, session_id)
+    if not session or session.user_id != current_user.id:
+        raise HTTPException(status_code=404, detail="Session not found")
+        
+    success = await delete_chat_session(db, session_id)
+    if not success:
+        raise HTTPException(status_code=500, detail="Failed to delete session")
+        
+    return {"status": "ok"}
 
 

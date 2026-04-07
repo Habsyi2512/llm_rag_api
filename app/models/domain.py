@@ -4,14 +4,21 @@ from sqlalchemy import Column, Integer, String, Text, DateTime, Date, JSON, Fore
 from sqlalchemy.orm import relationship
 from app.core.database import Base
 
+# Zona waktu WIB (UTC+7)
+WIB = datetime.timezone(datetime.timedelta(hours=7))
+
+def now_wib():
+    """Return current datetime in WIB (UTC+7)."""
+    return datetime.datetime.now(WIB).replace(tzinfo=None)
+
 class Faq(Base):
     __tablename__ = "faqs"
 
     id = Column(Integer, primary_key=True, index=True)
     question = Column(String(255), nullable=False)
     answer = Column(Text, nullable=False)
-    created_at = Column(DateTime, default=datetime.datetime.utcnow)
-    updated_at = Column(DateTime, default=datetime.datetime.utcnow, onupdate=datetime.datetime.utcnow)
+    created_at = Column(DateTime, default=now_wib)
+    updated_at = Column(DateTime, default=now_wib, onupdate=now_wib)
 
 class Document(Base):
     __tablename__ = "documents"
@@ -21,8 +28,8 @@ class Document(Base):
     source_path = Column(String(255), nullable=False)
     content = Column(Text, nullable=False)
     metadata_json = Column(JSON, nullable=True) # Renamed to metadata_json to avoid conflict if needed, or just metadata
-    created_at = Column(DateTime, default=datetime.datetime.utcnow)
-    updated_at = Column(DateTime, default=datetime.datetime.utcnow, onupdate=datetime.datetime.utcnow)
+    created_at = Column(DateTime, default=now_wib)
+    updated_at = Column(DateTime, default=now_wib, onupdate=now_wib)
 
 class DocumentTracking(Base):
     __tablename__ = "document_trackings"
@@ -34,8 +41,8 @@ class DocumentTracking(Base):
     note = Column(String(100), nullable=True)
     estimated_completion_date = Column(Date, nullable=True)
     completed_at = Column(DateTime, nullable=True)
-    created_at = Column(DateTime, default=datetime.datetime.utcnow)
-    updated_at = Column(DateTime, default=datetime.datetime.utcnow, onupdate=datetime.datetime.utcnow)
+    created_at = Column(DateTime, default=now_wib)
+    updated_at = Column(DateTime, default=now_wib, onupdate=now_wib)
 
 class ChatHistory(Base):
     __tablename__ = "chat_histories"
@@ -46,8 +53,8 @@ class ChatHistory(Base):
     category = Column(String(255), nullable=True)
     ip_address = Column(String(255), nullable=True)
     user_agent = Column(String(255), nullable=True)
-    created_at = Column(DateTime, default=datetime.datetime.utcnow)
-    updated_at = Column(DateTime, default=datetime.datetime.utcnow, onupdate=datetime.datetime.utcnow)
+    created_at = Column(DateTime, default=now_wib)
+    updated_at = Column(DateTime, default=now_wib, onupdate=now_wib)
 
 class User(Base):
     __tablename__ = "users"
@@ -57,7 +64,7 @@ class User(Base):
     password_hash = Column(String(255), nullable=False)
     asal_desa = Column(String(255), nullable=True)
     role = Column(String(50), default="user") # admin / user
-    created_at = Column(DateTime, default=datetime.datetime.utcnow)
+    created_at = Column(DateTime, default=now_wib)
 
     sessions = relationship("ChatSession", back_populates="user", cascade="all, delete-orphan", lazy="selectin")
 
@@ -67,8 +74,8 @@ class ChatSession(Base):
     id = Column(String(36), primary_key=True, default=lambda: str(uuid.uuid4()))
     user_id = Column(Integer, ForeignKey("users.id"), nullable=False)
     title = Column(String(255), nullable=True)
-    created_at = Column(DateTime, default=datetime.datetime.utcnow)
-    updated_at = Column(DateTime, default=datetime.datetime.utcnow, onupdate=datetime.datetime.utcnow)
+    created_at = Column(DateTime, default=now_wib)
+    updated_at = Column(DateTime, default=now_wib, onupdate=now_wib)
 
     user = relationship("User", back_populates="sessions")
     messages = relationship("ChatMessage", back_populates="session", cascade="all, delete-orphan", lazy="selectin")
@@ -83,6 +90,6 @@ class ChatMessage(Base):
     category = Column(String(100), nullable=True)  # Kategori pertanyaan (KTP, KK, Akta, dll)
     retrieved_docs = Column(JSON, nullable=True)
     response_time = Column(Float, nullable=True)
-    created_at = Column(DateTime, default=datetime.datetime.utcnow)
+    created_at = Column(DateTime, default=now_wib)
 
     session = relationship("ChatSession", back_populates="messages")

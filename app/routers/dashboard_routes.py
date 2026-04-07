@@ -6,6 +6,7 @@ from sqlalchemy.future import select
 from sqlalchemy import delete, update, func
 from typing import List
 from datetime import datetime
+from app.models.domain import now_wib
 
 from app.core.database import get_db
 from app.core.auth import get_current_admin
@@ -99,7 +100,7 @@ async def update_faq(faq_id: int, faq: FaqUpdate, background_tasks: BackgroundTa
     for key, value in faq.model_dump().items():
         setattr(db_faq, key, value)
     
-    db_faq.updated_at = datetime.utcnow()
+    db_faq.updated_at = now_wib()
     await db.commit()
     await db.refresh(db_faq)
     
@@ -225,7 +226,7 @@ async def update_document(doc_id: int, doc: DocumentUpdate, background_tasks: Ba
     for key, value in doc.model_dump().items():
         setattr(db_doc, key, value)
     
-    db_doc.updated_at = datetime.utcnow()
+    db_doc.updated_at = now_wib()
     await db.commit()
     await db.refresh(db_doc)
     
@@ -324,7 +325,7 @@ async def update_tracking(tracking_id: int, tracking: DocumentTrackingUpdate, db
     for key, value in tracking.model_dump().items():
         setattr(db_tracking, key, value)
     
-    db_tracking.updated_at = datetime.utcnow()
+    db_tracking.updated_at = now_wib()
     await db.commit()
     await db.refresh(db_tracking)
     return db_tracking
