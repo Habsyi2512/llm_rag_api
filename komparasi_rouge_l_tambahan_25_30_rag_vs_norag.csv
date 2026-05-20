@@ -1,0 +1,50 @@
+﻿Pertanyaan,Referensi,Jawaban (Dengan RAG),Jawaban (Tanpa RAG),RAG - ROUGE-L Precision,RAG - ROUGE-L Recall,RAG - ROUGE-L F1,No-RAG - ROUGE-L Precision,No-RAG - ROUGE-L Recall,No-RAG - ROUGE-L F1
+"Apakah ada biaya yang harus dibayarkan untuk mengurus dokumen kependudukan, khususnya KTP?",Semua pelayanan pengurusan dokumen kependudukan di Disdukcapil TIDAK DIPUNGUT BIAYA.,"Tidak ada biaya yang harus dibayarkan untuk mengurus dokumen kependudukan, termasuk KTP. Semua pelayanan pengurusan dokumen kependudukan di Disdukcapil TIDAK DIPUNGUT BIAYA atau GRATIS.","```json
+{
+  ""answer"": ""Tidak ada biaya. Pengurusan dokumen kependudukan, termasuk KTP, gratis."",
+  ""category"": ""KTP""
+}
+```",0.4166666666666667,1.0,0.5882352941176471,0.23076923076923078,0.3,0.2608695652173913
+Apakah KTP-el yang sudah habis masa berlakunya perlu diperpanjang kembali?,KTP-el yang diterbitkan sebelum tahun 2013 (Undang-Undang Nomor 24 Tahun 2013) secara otomatis berlaku seumur hidup dan tidak perlu diperpanjang.,"KTP-el yang diterbitkan sebelum tahun 2013, berdasarkan Undang-Undang Nomor 24 Tahun 2013, secara otomatis berlaku seumur hidup dan tidak perlu diperpanjang kembali.","```json
+{
+  ""answer"": ""Tidak perlu. KTP-el berlaku seumur hidup dan tidak perlu diperpanjang, meskipun tertera masa berlaku."",
+  ""category"": ""KTP""
+}
+```",0.9166666666666666,1.0,0.9565217391304348,0.47368421052631576,0.4090909090909091,0.43902439024390244
+Apa saja jenis penerbitan Kartu Keluarga yang dapat dilayani oleh Disdukcapil?,"Penerbitan Kartu Keluarga terdiri atas penerbitan KK baru, penerbitan KK karena perubahan data, dan penerbitan KK karena hilang atau rusak.","Berdasarkan informasi yang tersedia, jenis penerbitan Kartu Keluarga yang dapat dilayani oleh Disdukcapil Kabupaten Kepulauan Anambas meliputi:
+*   Penerbitan KK baru
+*   Penerbitan KK karena perubahan data
+*   Penerbitan KK karena hilang atau rusak","```json
+{
+  ""answer"": ""Penerbitan Kartu Keluarga dapat dilayani untuk pembuatan KK baru, perubahan data (misalnya penambahan/pengurangan anggota, perubahan elemen data), KK hilang, atau KK rusak."",
+  ""category"": ""KK""
+}
+```",0.5483870967741935,0.85,0.6666666666666665,0.4074074074074074,0.55,0.46808510638297873
+Apa saja persyaratan penerbitan Kartu Keluarga baru bagi penduduk WNI?,"Persyaratan penerbitan KK baru bagi penduduk WNI antara lain buku nikah atau kutipan akta perkawinan atau kutipan akta perceraian, surat keterangan pindah atau surat keterangan pindah datang bagi penduduk yang pindah, surat keterangan pindah luar negeri bagi WNI yang datang dari luar negeri, surat keterangan pengganti tanda identitas bagi penduduk rentan administrasi kependudukan, atau dokumen perubahan status kewarganegaraan jika diperlukan.","Berdasarkan Pasal 11 ayat (1), persyaratan penerbitan Kartu Keluarga baru bagi penduduk WNI adalah sebagai berikut:
+
+*   Buku nikah/kutipan akta perkawinan atau kutipan akta perceraian.
+*   Surat keterangan pindah/surat keterangan pindah datang bagi Penduduk yang pindah dalam wilayah Negara Kesatuan Republik Indonesia.
+*   Surat keterangan pindah luar negeri yang diterbitkan oleh Disdukcapil Kabupaten/Kota bagi WNI yang datang dari luar wilayah Negara Kesatuan Republik Indonesia karena pindah.
+*   Surat keterangan pengganti tanda identitas bagi Penduduk rentan Administrasi Kependudukan.
+*   Petikan Keputusan Presiden tentang pewarganegaraan dan berita acara pengucapan sumpah atau pernyataan janji setia bagi Penduduk WNI yang semula berkewarganegaraan asing atau petikan Keputusan Menteri yang menyelenggarakan urusan pemerintahan di bidang hukum tentang perubahan status kewarganegaraan.","```json
+{
+  ""answer"": ""Persyaratan umum penerbitan Kartu Keluarga baru bagi WNI meliputi: Formulir F-1.01, fotokopi KTP pemohon, fotokopi Akta Nikah/Buku Nikah (bagi yang sudah menikah), fotokopi Akta Kelahiran (untuk anggota keluarga), dan Surat Keterangan Pindah (jika pindah datang)."",
+  ""category"": ""KK""
+}
+```",0.45535714285714285,0.85,0.5930232558139534,0.30952380952380953,0.21666666666666667,0.2549019607843137
+Apa persyaratan penerbitan Kartu Keluarga karena hilang atau rusak bagi penduduk WNI?,"Persyaratan penerbitan KK karena hilang atau rusak bagi WNI adalah surat keterangan hilang dari kepolisian atau KK yang rusak, serta KTP-el.","Berdasarkan Pasal 13 ayat (1) Peraturan Presiden Republik Indonesia, persyaratan penerbitan Kartu Keluarga (KK) karena hilang atau rusak bagi Penduduk Warga Negara Indonesia (WNI) adalah sebagai berikut:
+*   Surat keterangan hilang dari kepolisian atau KK yang rusak.
+*   KTP-el.","```json
+{
+  ""answer"": ""Persyaratan penerbitan Kartu Keluarga karena hilang atau rusak bagi WNI meliputi: Surat Keterangan Kehilangan dari Kepolisian (untuk yang hilang) atau KK yang rusak, KTP-el salah satu anggota keluarga, dan dokumen pendukung (seperti akta nikah/cerai, akta kelahiran) jika ada perubahan data."",
+  ""category"": ""KK""
+}
+```",0.5526315789473685,0.9545454545454546,0.7000000000000001,0.391304347826087,0.8181818181818182,0.5294117647058824
+Periksa status Kartu Keluarga saya dengan nomor 5803662818.,"Berdasarkan data yang tersedia, dokumen Kartu Keluarga dengan nomor registrasi 5803662818 memiliki status Siap Diambil. Catatan: KTP bisa diambil di front office. Waktu selesai: 2026-05-18.","Status dokumen Kartu Keluarga Anda dengan nomor registrasi **5803662818** adalah **Siap Diambil**.
+
+Dokumen Anda telah selesai diproses pada tanggal 2026-05-18 pukul 05:27:58.","```json
+{
+  ""answer"": ""Tidak dapat memeriksa status KK secara langsung. Silakan hubungi Disdukcapil Kepulauan Anambas atau cek melalui layanan online resmi dengan nomor 5803662818."",
+  ""category"": ""KK""
+}
+```",0.5,0.48148148148148145,0.49056603773584906,0.12,0.1111111111111111,0.11538461538461538

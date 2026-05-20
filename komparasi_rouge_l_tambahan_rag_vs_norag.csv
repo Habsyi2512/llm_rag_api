@@ -1,0 +1,95 @@
+﻿Pertanyaan,Referensi,Jawaban (Dengan RAG),Jawaban (Tanpa RAG),RAG - ROUGE-L Precision,RAG - ROUGE-L Recall,RAG - ROUGE-L F1,No-RAG - ROUGE-L Precision,No-RAG - ROUGE-L Recall,No-RAG - ROUGE-L F1
+Saya ingin pindah domisili ke daerah lain. Dokumen apa yang digunakan untuk menerangkan perpindahan penduduk WNI?,"Dokumen yang digunakan adalah SKPWNI atau Surat Keterangan Pindah Warga Negara Indonesia, yaitu dokumen kependudukan yang menerangkan perpindahan penduduk ke daerah domisili yang baru.","Untuk menerangkan perpindahan penduduk WNI ke daerah domisili yang baru, dokumen yang digunakan adalah Surat Keterangan Pindah (SKP) atau yang dikenal juga sebagai Surat Keterangan Pindah Warga Negara Indonesia (SKPWNI). Hal ini berdasarkan Pasal 25 ayat (1) Perpres No. 96 Tahun 2018 yang menyatakan bahwa pendaftaran perpindahan Penduduk WNI dalam wilayah Negara Kesatuan Republik Indonesia dilakukan dengan penerbitan surat keterangan pindah.","```json
+{
+  ""answer"": ""Surat Keterangan Pindah Warga Negara Indonesia (SKPWNI)."",
+  ""category"": ""Pindah Datang""
+}
+```",0.22950819672131148,0.5833333333333334,0.32941176470588235,0.5,0.25,0.3333333333333333
+Berapa lama proses pembuatan SKPWNI di Disdukcapil Kepulauan Anambas setelah semua persyaratan diterima?,Pembuatan SKPWNI diproses paling lama dalam waktu 2 hari kerja setelah semua persyaratan diterima dan tidak dikenakan biaya.,Pembuatan Surat Keterangan Pindah Warga Negara Indonesia (SKPWNI) diproses paling lama dalam waktu 2 hari kerja setelah semua persyaratan diterima.,"```json
+{
+  ""answer"": ""Proses penerbitan SKPWNI umumnya memakan waktu 1-3 hari kerja setelah semua persyaratan lengkap diterima."",
+  ""category"": ""Pindah Datang""
+}
+```",0.7,0.7777777777777778,0.7368421052631577,0.4,0.4444444444444444,0.4210526315789474
+"Jika penduduk pindah datang ke daerah baru, apakah perpindahan tersebut dapat berkaitan dengan penerbitan Kartu Keluarga baru?","Ya, penerbitan KK baru dapat dilakukan untuk penduduk yang pindah datang, termasuk penduduk yang tidak diikuti kepala keluarga atau WNI yang datang dari luar wilayah Indonesia karena pindah.","Ya, perpindahan penduduk yang tidak diikuti dengan kepala keluarga dapat berkaitan dengan penerbitan Kartu Keluarga (KK) baru. Hal ini sesuai dengan Pasal 10 ayat (1) huruf d yang menyatakan bahwa penerbitan KK Baru untuk Penduduk WNI dapat dilaksanakan karena pindah datang Penduduk yang tidak diikuti dengan kepala keluarga.","```json
+{
+  ""answer"": ""Ya, perpindahan penduduk (pindah datang) akan menyebabkan penerbitan Kartu Keluarga baru di alamat tujuan."",
+  ""category"": ""Pindah Datang""
+}
+```",0.2916666666666667,0.5,0.3684210526315789,0.3157894736842105,0.21428571428571427,0.2553191489361702
+"Jika penduduk pindah ke alamat rumah yang bukan miliknya, dokumen tambahan apa yang perlu disiapkan?",Diperlukan surat pernyataan di atas materai tidak keberatan penggunaan alamat dalam dokumen kependudukan dari pemilik rumah.,"Berdasarkan Pasal 27 huruf a dan huruf c, jika penduduk menempati tempat tinggal yang bukan miliknya, dokumen tambahan yang perlu disiapkan adalah surat pernyataan di atas materai tidak keberatan penggunaan alamat dalam dokumen kependudukan dari pemilik rumah.","```json
+{
+  ""answer"": ""Surat pernyataan tidak keberatan dari pemilik rumah/lahan dan fotokopi KTP pemilik rumah/lahan. Jika menyewa, bisa juga melampirkan surat perjanjian sewa."",
+  ""category"": ""Pindah Datang""
+}
+```",0.40540540540540543,0.9375,0.5660377358490566,0.25925925925925924,0.4375,0.3255813953488372
+Apa fungsi layanan Kartu Identitas Anak dalam administrasi kependudukan?,Kartu Identitas Anak atau KIA merupakan identitas resmi anak sebagai bukti diri bagi anak yang berusia kurang dari 17 tahun dan belum menikah.,Kartu Identitas Anak (KIA) berfungsi sebagai identitas resmi anak dan bukti diri bagi anak yang berusia kurang dari 17 tahun dan belum menikah. KIA diterbitkan oleh Dinas Kependudukan dan Pencatatan Sipil Kabupaten/Kota atau Unit Pelaksana Teknis Dinas Kependudukan dan Pencatatan Sipil.,"```json
+{
+  ""answer"": ""Kartu Identitas Anak (KIA) berfungsi sebagai identitas resmi anak di bawah 17 tahun dan belum menikah, mempermudah akses layanan publik seperti pendidikan dan kesehatan, serta melindungi hak-hak anak."",
+  ""category"": ""KIA""
+}
+```",0.47619047619047616,0.8695652173913043,0.6153846153846153,0.36363636363636365,0.5217391304347826,0.42857142857142855
+Berapa lama proses penerbitan Kartu Identitas Anak di Disdukcapil Kepulauan Anambas?,Penerbitan Kartu Identitas Anak diproses paling lama dalam waktu 2 hari kerja setelah semua persyaratan diterima dan tidak dikenakan biaya.,Penerbitan Kartu Identitas Anak (KIA) di Disdukcapil Kabupaten Kepulauan Anambas diproses paling lama dalam waktu 2 hari kerja setelah semua persyaratan diterima.,"```json
+{
+  ""answer"": ""Proses penerbitan Kartu Identitas Anak (KIA) umumnya membutuhkan waktu 1 hari kerja setelah semua persyaratan lengkap."",
+  ""category"": ""KIA""
+}
+```",0.7272727272727273,0.8,0.761904761904762,0.5,0.5,0.5
+Apa saja persyaratan utama pencatatan kelahiran WNI di wilayah Indonesia?,"Persyaratan pencatatan kelahiran WNI meliputi surat keterangan kelahiran, buku nikah atau kutipan akta perkawinan atau bukti lain yang sah, Kartu Keluarga, dan KTP-el.","Berdasarkan Pasal 43 ayat (1), persyaratan utama pencatatan kelahiran Warga Negara Indonesia (WNI) di wilayah Negara Kesatuan Republik Indonesia adalah sebagai berikut:
+
+*   Surat keterangan kelahiran
+*   Buku nikah/kutipan akta perkawinan atau bukti lain yang sah
+*   Kartu Keluarga (KK)
+*   KTP-el
+
+Perlu diperhatikan bahwa KTP-el tidak dipersyaratkan bagi ibu kandung yang belum berusia 17 (tujuh belas) tahun dengan status belum kawin, sebagaimana diatur dalam Pasal 43 ayat (3).","```json
+{
+  ""answer"": ""Persyaratan utama pencatatan kelahiran WNI meliputi: Surat Keterangan Lahir dari fasilitas kesehatan/penolong kelahiran, Kartu Keluarga (KK) orang tua, Kartu Tanda Penduduk (KTP) orang tua, dan Buku Nikah/Akta Perkawinan orang tua (jika ada)."",
+  ""category"": ""Akta Kelahiran""
+}
+```",0.3088235294117647,0.875,0.45652173913043487,0.3076923076923077,0.5,0.380952380952381
+Apakah KTP-el ibu tetap dipersyaratkan dalam pencatatan kelahiran apabila ibu kandung belum berusia 17 tahun dan belum kawin?,Tidak. KTP-el tidak dipersyaratkan bagi ibu kandung yang belum berusia 17 tahun dengan status belum kawin.,"Berdasarkan Pasal 43 ayat (3), KTP-el tidak dipersyaratkan bagi ibu kandung yang belum berusia 17 (tujuh belas) tahun dengan status belum kawin dalam pencatatan kelahiran.","```json
+{
+  ""answer"": ""Tidak, KTP-el ibu tidak dipersyaratkan karena ibu belum berusia 17 tahun dan belum memiliki KTP-el. Namun, Nomor Induk Kependudukan (NIK) ibu tetap diperlukan untuk pencatatan."",
+  ""category"": ""Akta Kelahiran""
+}
+```",0.6153846153846154,0.9411764705882353,0.744186046511628,0.34375,0.6470588235294118,0.4489795918367347
+Bagaimana pencatatan akta kelahiran anak jika orang tua tidak memiliki buku nikah atau kutipan akta perkawinan dan status hubungan dalam KK tidak menunjukkan suami istri?,Anak dicatat dalam register akta kelahiran dan kutipan akta kelahiran sebagai anak seorang ibu.,"Berdasarkan Pasal 42, jika orang tua tidak dapat memenuhi persyaratan berupa buku nikah/kutipan akta perkawinan atau bukti lain yang sah, dan status hubungan dalam Kartu Keluarga (KK) tidak menunjukkan status hubungan perkawinan sebagai suami istri, maka pencatatan kelahiran anak akan dilakukan dalam register akta kelahiran dan kutipan akta kelahiran sebagai **anak seorang ibu**.","```json
+{
+  ""answer"": ""Pencatatan akta kelahiran anak akan dilakukan sebagai anak seorang ibu. Nama ayah dapat dicantumkan jika ada pengakuan dari ayah dan penetapan pengadilan, namun tanpa buku nikah, status hukum anak akan mengikuti ibu."",
+  ""category"": ""Akta Kelahiran""
+}
+```",0.24074074074074073,0.9285714285714286,0.3823529411764706,0.16216216216216217,0.42857142857142855,0.23529411764705885
+"Bagaimana pencatatan akta kelahiran jika orang tua tidak memiliki buku nikah, tetapi status hubungan dalam KK menunjukkan suami istri?",Anak dicatat sebagai anak ayah dan ibu dengan tambahan frasa bahwa perkawinannya belum tercatat sesuai ketentuan peraturan perundang-undangan.,"Berdasarkan konteks yang diberikan, jika orang tua tidak memiliki buku nikah/kutipan akta perkawinan atau bukti lain yang sah, tetapi status hubungan dalam Kartu Keluarga (KK) menunjukkan sebagai suami istri, maka pencatatan akta kelahiran akan dilakukan sebagai berikut:
+
+*   **Pencatatan dalam Akta Kelahiran:** Dicatat dalam register akta kelahiran dan kutipan akta kelahiran sebagai anak ayah dan ibu dengan tambahan frasa yaitu: **yang perkawinannya belum tercatat sesuai dengan ketentuan peraturan perundang-undangan.** (Berdasarkan Pasal 42)
+*   **Persyaratan Tambahan:** Penduduk dapat membuat **surat pernyataan tanggung jawab mutlak atas kebenaran data** dengan diketahui oleh 2 (dua) orang saksi. (Berdasarkan Pasal 34)","```json
+{
+  ""answer"": ""Anak akan dicatat sebagai anak dari ibu. Nama ayah dapat dicantumkan jika ada pengakuan anak dari ayah dan persetujuan ibu, namun status hukum anak tetap sebagai anak luar kawin."",
+  ""category"": ""Akta Kelahiran""
+}
+```",0.17708333333333334,0.8947368421052632,0.2956521739130435,0.20588235294117646,0.3684210526315789,0.2641509433962264
+"Jika terjadi perceraian, apakah data Kartu Keluarga dapat diperbarui karena peristiwa tersebut?",Ya. Perceraian termasuk peristiwa penting yang dapat menjadi dasar penerbitan KK karena perubahan data sesuai ketentuan administrasi kependudukan.,"Ya, data Kartu Keluarga (KK) dapat diperbarui karena peristiwa perceraian. Perceraian termasuk dalam kategori Peristiwa Penting yang dapat menyebabkan perubahan data pada KK. Hal ini sesuai dengan **Pasal 13 ayat (1) huruf d** yang menyatakan bahwa perceraian adalah salah satu Peristiwa Penting, dan **Pasal 13 ayat (2)** yang menyebutkan bahwa penerbitan KK karena perubahan data pada Peristiwa Penting tersebut harus memenuhi persyaratan sesuai dengan ketentuan Peraturan Presiden mengenai persyaratan dan tata cara Pendaftaran Penduduk dan Pencatatan Sipil.","```json
+{
+  ""answer"": ""Ya, data Kartu Keluarga dapat diperbarui setelah perceraian untuk mencerminkan status dan susunan keluarga yang baru."",
+  ""category"": ""KK""
+}
+```",0.18181818181818182,0.7777777777777778,0.2947368421052632,0.2,0.2222222222222222,0.2105263157894737
+Apa fungsi layanan penerbitan Akta Perceraian di Disdukcapil?,Akta Perceraian digunakan untuk mencatat perceraian yang telah diputuskan oleh pengadilan dan berkekuatan hukum tetap.,Layanan penerbitan Akta Perceraian di Disdukcapil Kabupaten Kepulauan Anambas berfungsi untuk mencatat perceraian yang telah diputuskan oleh pengadilan.,"```json
+{
+  ""answer"": ""Mencatat dan menerbitkan Akta Perceraian berdasarkan putusan pengadilan yang telah berkekuatan hukum tetap, untuk memperbarui status perkawinan dalam data kependudukan."",
+  ""category"": ""Umum""
+}
+```",0.5555555555555556,0.6666666666666666,0.606060606060606,0.2916666666666667,0.4666666666666667,0.35897435897435903
+"Jika kepala keluarga meninggal dunia, dokumen apa yang dapat menjadi syarat tambahan untuk penerbitan KK baru karena penggantian kepala keluarga?",Penerbitan KK baru karena penggantian kepala keluarga dapat dilengkapi dengan syarat tambahan berupa akta kematian.,"Berdasarkan Pasal 10 ayat (3), untuk penerbitan Kartu Keluarga (KK) baru karena penggantian kepala keluarga, syarat tambahannya adalah **akta kematian**.","```json
+{
+  ""answer"": ""Akta Kematian kepala keluarga yang meninggal dunia."",
+  ""category"": ""KK""
+}
+```",0.5,0.6666666666666666,0.5714285714285715,0.18181818181818182,0.13333333333333333,0.15384615384615383
+"Apakah dokumen kependudukan yang sudah menggunakan tanda tangan elektronik, QR code, atau barcode masih perlu dilegalisir?",Tidak. Dokumen kependudukan dengan format digital berupa QR code atau barcode dan sudah ditandatangani secara elektronik tidak memerlukan legalisir.,"Tidak, dokumen kependudukan dengan format digital (QR code dan Barcode) yang sudah ditandatangani secara elektronik tidak memerlukan legalisir. Hal ini sesuai dengan Peraturan Menteri Dalam Negeri Nomor 104 Tahun 2019.","```json
+{
+  ""answer"": ""Tidak, dokumen kependudukan yang sudah menggunakan tanda tangan elektronik (TTE) dan kode QR tidak memerlukan legalisir. Keasliannya dapat diverifikasi melalui pemindaian kode QR."",
+  ""category"": ""Umum""
+}
+```",0.5333333333333333,0.8421052631578947,0.653061224489796,0.2962962962962963,0.42105263157894735,0.34782608695652173
